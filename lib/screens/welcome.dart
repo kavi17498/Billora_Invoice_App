@@ -13,8 +13,11 @@ class Welcome extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text("Welcome to \nInvoice App", style: primaryTextStyle),
-            Lottie.asset(
-              "assets/lottie/k.json",
+            SizedBox(
+              height: 20,
+            ),
+            Image.asset(
+              "assets/images/welcome.png",
               width: 300,
               height: 300,
               fit: BoxFit.fill,
