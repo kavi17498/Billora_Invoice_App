@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:invoiceapp/components/ButtonComponent.dart';
+import 'package:invoiceapp/constrains/Colors.dart';
 import 'package:invoiceapp/constrains/TextStyles.dart';
 import 'package:lottie/lottie.dart';
 
@@ -13,8 +15,9 @@ class SignInpage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              "Login to your account",
+              "Login to your \nAccount",
               style: primaryTextStyle,
+              textAlign: TextAlign.center,
             ),
             Lottie.asset(
               "assets/lottie/k.json",
@@ -22,6 +25,11 @@ class SignInpage extends StatelessWidget {
               height: 300,
               fit: BoxFit.fill,
             ),
+            Buttoncomponent(
+                text: "Login",
+                onPressed: () {},
+                color: primaryColor,
+                textStyle: ButtonTextStyle)
           ],
         ),
       ),

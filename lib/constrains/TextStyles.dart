@@ -6,3 +6,9 @@ TextStyle primaryTextStyle = TextStyle(
   fontSize: 40,
   fontWeight: FontWeight.bold,
 );
+
+TextStyle ButtonTextStyle = TextStyle(
+  color: backgroundColor,
+  fontSize: 20,
+  fontWeight: FontWeight.w400,
+);

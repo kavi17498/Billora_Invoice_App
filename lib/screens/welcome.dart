@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
+import 'package:invoiceapp/constrains/Colors.dart';
 import '../constrains/TextStyles.dart';
 
 class Welcome extends StatelessWidget {
@@ -22,6 +22,27 @@ class Welcome extends StatelessWidget {
               height: 300,
               fit: BoxFit.fill,
             ),
+            SizedBox(
+              height: 40,
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, "/signin");
+              },
+              child: Container(
+                height: MediaQuery.of(context).size.height * 0.06,
+                width: MediaQuery.of(context).size.width * 0.5,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  color: primaryColor,
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  "Get Started",
+                  style: ButtonTextStyle,
+                ),
+              ),
+            )
           ],
         ),
       ),
