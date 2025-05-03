@@ -36,13 +36,13 @@ class UploadLogoScreen extends StatelessWidget {
               Buttoncomponent(
                   text: "Continue",
                   onPressed: () {
-                    Navigator.pushNamed(context, "/businessName");
+                    Navigator.pushNamed(context, "/companyinfo");
                   },
                   color: primaryColor,
                   textStyle: buttonTextStyle),
               const SizedBox(height: 5),
               SkipButton(onTap: () {
-                Navigator.pushNamed(context, "/businessName");
+                Navigator.pushNamed(context, "/companyinfo");
               }),
             ],
           ),

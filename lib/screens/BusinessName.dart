@@ -28,8 +28,8 @@ class Businessname extends StatelessWidget {
                 child: TextField(
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: secondaryColor),
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide(color: primaryColor),
                     ),
                     hintText: "Business Name",
                     hintStyle: subTextStyle,
