@@ -12,15 +12,25 @@ class Welcome extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Welcome to \nInvoice App", style: primaryTextStyle),
+            Text("Billora", style: bigtext),
             SizedBox(
               height: 20,
             ),
             Image.asset(
               "assets/images/welcome.png",
-              width: 300,
-              height: 300,
+              width: 250,
+              height: 250,
               fit: BoxFit.fill,
+            ),
+            SizedBox(
+              height: 40,
+            ),
+            Center(
+              child: Text(
+                "Invoice Maker \n Smarter Billing. Simpler Business",
+                style: subTextStyle,
+                textAlign: TextAlign.center,
+              ),
             ),
             SizedBox(
               height: 40,
@@ -39,7 +49,7 @@ class Welcome extends StatelessWidget {
                 alignment: Alignment.center,
                 child: Text(
                   "Get Started",
-                  style: ButtonTextStyle,
+                  style: buttonTextStyle,
                 ),
               ),
             )

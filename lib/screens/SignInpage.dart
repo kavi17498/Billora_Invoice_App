@@ -27,9 +27,11 @@ class SignInpage extends StatelessWidget {
             ),
             Buttoncomponent(
                 text: "Login",
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, "/businessName");
+                },
                 color: primaryColor,
-                textStyle: ButtonTextStyle)
+                textStyle: buttonTextStyle)
           ],
         ),
       ),

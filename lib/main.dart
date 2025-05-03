@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
 import "package:google_fonts/google_fonts.dart";
+import "package:invoiceapp/screens/BusinessName.dart";
 import "package:invoiceapp/screens/SignInpage.dart";
+import "package:invoiceapp/screens/UploadLogo.dart";
 import "package:invoiceapp/screens/welcome.dart";
 
 void main() {
@@ -22,6 +24,8 @@ class Myapp extends StatelessWidget {
       home: Welcome(),
       routes: {
         "/signin": (context) => const SignInpage(),
+        "/businessName": (context) => const Businessname(),
+        "/uploadlogo": (context) => const UploadLogoScreen()
       },
     );
   }
