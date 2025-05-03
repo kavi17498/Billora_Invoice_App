@@ -1,38 +1,75 @@
 import 'package:flutter/material.dart';
+import 'package:invoiceapp/screens/Invoicespage.dart';
+import 'package:invoiceapp/screens/clientspage.dart';
+import 'package:invoiceapp/screens/estimations.dart';
+import 'package:invoiceapp/screens/itemspage.dart';
+import 'package:invoiceapp/screens/settings.dart';
 
-class Userdashboard extends StatefulWidget {
-  const Userdashboard({super.key});
+class UserDashboard extends StatefulWidget {
+  const UserDashboard({super.key});
 
   @override
-  State<Userdashboard> createState() => _UserdashboardState();
+  State<UserDashboard> createState() => _UserDashboardState();
 }
 
-class _UserdashboardState extends State<Userdashboard> {
+class _UserDashboardState extends State<UserDashboard> {
+  int _selectedIndex = 0;
+
+  final List<Widget> _pages = const [
+    Invoicespage(),
+    EstimationsPage(),
+    ClientsPage(),
+    ItemsPage(),
+    SettingsPage(),
+  ];
+
+  final List<String> _titles = const [
+    "Invoices",
+    "Estimations",
+    "Clients",
+    "Items",
+    "Settings",
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("User Dashboard"),
-        centerTitle: true,
-        backgroundColor: Colors.blue,
+        title: Text(_titles[_selectedIndex]),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 1,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              "Welcome to the User Dashboard",
-              style: TextStyle(fontSize: 24),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Add your button action here
-              },
-              child: const Text("Go to Profile"),
-            ),
-          ],
-        ),
+      body: _pages[_selectedIndex],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Add invoice or other action
+        },
+        backgroundColor: const Color(0xFF4D7CFE),
+        child: const Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        selectedItemColor: const Color(0xFF4D7CFE),
+        unselectedItemColor: Colors.grey,
+        items: const [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.receipt_long), label: 'Invoices'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.description), label: 'Estimations'),
+          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Clients'),
+          BottomNavigationBarItem(icon: Icon(Icons.category), label: 'Items'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings), label: 'Settings'),
+        ],
       ),
     );
   }
