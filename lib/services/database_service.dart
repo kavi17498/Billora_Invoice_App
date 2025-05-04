@@ -3,6 +3,7 @@ import 'package:sqflite/sqflite.dart';
 
 class DatabaseService {
   static final DatabaseService instance = DatabaseService._constructor();
+
   final String _tableName = 'user';
   final String _columnId = 'id';
   final String _columnName = 'name';
@@ -20,35 +21,49 @@ class DatabaseService {
   Future<Database> getdatabase() async {
     final databaseDirpath = await getDatabasesPath();
     final databasepath = join(databaseDirpath, 'master_db.db');
+    print("Database path: $databasepath");
+
     final database = await openDatabase(
       databasepath,
       version: 1,
-      onCreate: (db, version) {
-        db.execute('''
+      onCreate: (db, version) async {
+        print("Creating table $_tableName...");
+        await db.execute('''
           CREATE TABLE $_tableName (
             $_columnId INTEGER PRIMARY KEY AUTOINCREMENT,
-            $_columnName TEXT ,
-            $_columnEmail TEXT ,
-            $_columnPhone TEXT ,
-            $_columnAddress TEXT ,
-            $_columnNote TEXT ,
+            $_columnName TEXT,
+            $_columnEmail TEXT,
+            $_columnPhone TEXT,
+            $_columnAddress TEXT,
+            $_columnNote TEXT,
+            $_columnCompanyLogoUrl TEXT
           )
         ''');
+        print("Table $_tableName created successfully.");
       },
     );
+
+    print("Database opened.");
     return database;
   }
 
-  void insertUser(
-    String content,
-  ) async {
-    final db = await getdatabase();
-    await db.insert(_tableName, {
-      _columnName: content,
-      _columnEmail: content,
-      _columnPhone: content,
-      _columnAddress: content,
-      _columnNote: content,
-    });
+  Future<void> insertUser(String content) async {
+    try {
+      final db = await getdatabase();
+      print("Inserting user with content: $content");
+
+      await db.insert(_tableName, {
+        _columnName: content,
+        _columnEmail: content,
+        _columnPhone: content,
+        _columnAddress: content,
+        _columnNote: content,
+      });
+
+      print("User inserted successfully into $_tableName.");
+    } catch (e) {
+      print("Error inserting user: $e");
+      rethrow;
+    }
   }
 }
