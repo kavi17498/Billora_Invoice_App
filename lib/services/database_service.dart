@@ -15,6 +15,8 @@ class DatabaseService {
   final String _columnPassword = 'password';
   final String _columnCompanyName = 'company_name';
   final String _columnCompanyLogoUrl = 'company_logo_url';
+  final String _columnWebsite = 'website';
+  final String _columnState = 'state';
 
   DatabaseService._constructor();
 
@@ -36,7 +38,9 @@ class DatabaseService {
             $_columnPhone TEXT,
             $_columnAddress TEXT,
             $_columnNote TEXT,
-            $_columnCompanyLogoUrl TEXT
+            $_columnCompanyLogoUrl TEXT,
+            $_columnWebsite TEXT,
+            $_columnState TEXT
           )
         ''');
         print("Table $_tableName created successfully.");
@@ -54,16 +58,53 @@ class DatabaseService {
 
       await db.insert(_tableName, {
         _columnName: content,
-        _columnEmail: content,
-        _columnPhone: content,
-        _columnAddress: content,
-        _columnNote: content,
       });
 
       print("User inserted successfully into $_tableName.");
     } catch (e) {
       print("Error inserting user: $e");
       rethrow;
+    }
+  }
+
+  Future<void> updateUserDetails({
+    required int userId,
+    String? address,
+    String? phone,
+    String? website,
+    String? email,
+  }) async {
+    try {
+      final db = await getdatabase();
+      await db.update(
+        _tableName,
+        {
+          if (address != null) _columnAddress: address,
+          if (phone != null) _columnPhone: phone,
+          if (website != null) _columnWebsite: website,
+          if (email != null) _columnEmail: email,
+        },
+        where: '$_columnId = ?',
+        whereArgs: [userId],
+      );
+      print("User ID $userId updated successfully.");
+    } catch (e) {
+      print("Error updating user: $e");
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>?> getUserById(int id) async {
+    final db = await getdatabase();
+    final result = await db.query(
+      _tableName,
+      where: '$_columnId = ?',
+      whereArgs: [id],
+    );
+    if (result.isNotEmpty) {
+      return result.first;
+    } else {
+      return null;
     }
   }
 }
