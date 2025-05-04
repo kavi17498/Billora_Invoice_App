@@ -29,7 +29,7 @@ class Myapp extends StatelessWidget {
         "/businessName": (context) => const Businessname(),
         "/uploadlogo": (context) => const UploadLogoScreen(),
         "/companyinfo": (context) => const CompleteProfileScreen(),
-        "/dashboard": (context) => const Userdashboard(),
+        "/dashboard": (context) => const UserDashboard(),
       },
     );
   }
