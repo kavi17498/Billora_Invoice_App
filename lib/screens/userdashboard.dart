@@ -30,7 +30,7 @@ class _UserDashboardState extends State<UserDashboard> {
     "Estimations",
     "Clients",
     "Items",
-    "Settings",
+    "Profile",
   ];
 
   void _onItemTapped(int index) {
@@ -69,8 +69,7 @@ class _UserDashboardState extends State<UserDashboard> {
               icon: Icon(Icons.description), label: 'Estimations'),
           BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Clients'),
           BottomNavigationBarItem(icon: Icon(Icons.category), label: 'Items'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.settings), label: 'Settings'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );
