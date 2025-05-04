@@ -5,8 +5,14 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:share_plus/share_plus.dart';
 
-Future<void> generateAndSharePdf(BuildContext context, String clientName,
-    String invoiceNumber, String description) async {
+Future<void> generateAndSharePdf(
+  BuildContext context,
+  String invoiceNumber,
+  String billto,
+  String buyeradress,
+  String buyermail,
+  String buyerphone,
+) async {
   final pdf = pw.Document();
 
   // Show loader dialog
@@ -36,8 +42,10 @@ Future<void> generateAndSharePdf(BuildContext context, String clientName,
             pw.Text('Invoice #$invoiceNumber',
                 style: pw.TextStyle(fontSize: 24)),
             pw.SizedBox(height: 20),
-            pw.Text('Client: $clientName'),
-            pw.Text('Description: $description'),
+            pw.Text('Bill To: $billto'),
+            pw.Text('Buyer Address: $buyeradress'),
+            pw.Text('Buyer Mail: $buyermail'),
+            pw.Text('Buyer Phone: $buyerphone'),
             pw.SizedBox(height: 20),
             pw.Text('Thank you for your business!'),
           ],
