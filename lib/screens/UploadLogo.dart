@@ -36,7 +36,7 @@ class _UploadLogoScreenState extends State<UploadLogoScreen> {
     final fileName = p.basename(_imageFile!.path);
     final savedImage = await _imageFile!.copy('${appDir.path}/$fileName');
 
-    final db = await DatabaseService.instance.database;
+    final db = await DatabaseService.instance.getdatabase();
 
     await db.update(
       'user',
