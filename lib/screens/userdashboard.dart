@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:invoiceapp/screens/Invoicespage.dart';
 import 'package:invoiceapp/screens/clientspage.dart';
 import 'package:invoiceapp/screens/estimations.dart';
+import 'package:invoiceapp/screens/invoiceGen/dialogbox.dart';
 import 'package:invoiceapp/screens/itemspage.dart';
 import 'package:invoiceapp/screens/settings.dart';
 
@@ -49,7 +50,7 @@ class _UserDashboardState extends State<UserDashboard> {
       body: _pages[_selectedIndex],
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Add invoice or other action
+          showInvoiceDialog(context);
         },
         backgroundColor: const Color(0xFF4D7CFE),
         child: const Icon(Icons.add),
