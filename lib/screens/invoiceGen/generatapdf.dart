@@ -31,8 +31,19 @@ Future<void> generateAndSharePdf(
       ),
     ),
   );
-
   try {
+    // Fetch the logo
+    pw.MemoryImage? companyLogo;
+    final companyLogoUrl = userData?['company_logo_url'] ?? '';
+
+    if (companyLogoUrl.isNotEmpty) {
+      final file = File(companyLogoUrl);
+      if (await file.exists()) {
+        final imageBytes = await file.readAsBytes();
+        companyLogo = pw.MemoryImage(imageBytes);
+      } else {}
+    }
+
     pdf.addPage(
       pw.Page(
         pageFormat: PdfPageFormat.a4,
@@ -49,6 +60,8 @@ Future<void> generateAndSharePdf(
               pw.Text('Phone: ${userData?['phone'] ?? ''}'),
               pw.Text('Address: ${userData?['address'] ?? ''}'),
               pw.Text('Website: ${userData?['website'] ?? ''}'),
+              if (companyLogo != null)
+                pw.Image(companyLogo, width: 100, height: 100),
               pw.SizedBox(height: 20),
               pw.Text('Bill To: $billto', style: pw.TextStyle(fontSize: 16)),
               pw.Text('Address: $buyerAddress'),
