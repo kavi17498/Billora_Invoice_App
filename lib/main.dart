@@ -4,6 +4,8 @@ import "package:invoiceapp/screens/BusinessName.dart";
 import "package:invoiceapp/screens/CompanyProfile.dart";
 import "package:invoiceapp/screens/SignInpage.dart";
 import "package:invoiceapp/screens/UploadLogo.dart";
+import "package:invoiceapp/screens/client/add_client.dart";
+import "package:invoiceapp/screens/client/client_list.dart";
 import "package:invoiceapp/screens/userdashboard.dart";
 import "package:invoiceapp/screens/welcome.dart";
 
@@ -30,6 +32,8 @@ class Myapp extends StatelessWidget {
         "/uploadlogo": (context) => const UploadLogoScreen(),
         "/companyinfo": (context) => const CompleteProfileScreen(),
         "/dashboard": (context) => const UserDashboard(),
+        "/clients": (context) => const ClientListScreen(),
+        "/addclient": (context) => const AddClientScreen(),
       },
     );
   }

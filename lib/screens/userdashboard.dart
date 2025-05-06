@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:invoiceapp/screens/Invoicespage.dart';
+import 'package:invoiceapp/screens/client/add_client.dart';
 import 'package:invoiceapp/screens/clientspage.dart';
 import 'package:invoiceapp/screens/estimations.dart';
 import 'package:invoiceapp/screens/invoiceGen/dialogbox.dart';
 import 'package:invoiceapp/screens/itemspage.dart';
 import 'package:invoiceapp/screens/profile/userdetailsscreen.dart';
-import 'package:invoiceapp/screens/settings.dart';
 
 class UserDashboard extends StatefulWidget {
   const UserDashboard({super.key});
@@ -39,6 +39,55 @@ class _UserDashboardState extends State<UserDashboard> {
     });
   }
 
+  // Define FAB based on selected page
+  Widget? _buildFloatingActionButton() {
+    switch (_selectedIndex) {
+      case 0: // Invoices
+        return FloatingActionButton(
+          onPressed: () {
+            showInvoiceDialog(context);
+          },
+          backgroundColor: const Color(0xFF4D7CFE),
+          child: const Icon(Icons.add),
+        );
+      case 1: // Estimations
+        return FloatingActionButton(
+          onPressed: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Create estimation")),
+            );
+          },
+          backgroundColor: const Color(0xFF4D7CFE),
+          child: const Icon(Icons.add),
+        );
+      case 2: // Clients
+        return FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const AddClientScreen()),
+            );
+          },
+          backgroundColor: const Color(0xFF4D7CFE),
+          child: const Icon(Icons.person_add),
+        );
+      case 3: // Items
+        return FloatingActionButton(
+          onPressed: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Add new item")),
+            );
+          },
+          backgroundColor: const Color(0xFF4D7CFE),
+          child: const Icon(Icons.add_box),
+        );
+      case 4: // Profile
+        return null; // No FAB on profile screen
+      default:
+        return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,13 +98,7 @@ class _UserDashboardState extends State<UserDashboard> {
         elevation: 1,
       ),
       body: _pages[_selectedIndex],
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showInvoiceDialog(context);
-        },
-        backgroundColor: const Color(0xFF4D7CFE),
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: _buildFloatingActionButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
