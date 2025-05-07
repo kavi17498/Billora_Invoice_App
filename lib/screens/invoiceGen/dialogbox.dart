@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:invoiceapp/screens/invoiceGen/generatapdf.dart';
 import 'package:invoiceapp/services/item_service.dart';
+import 'package:invoiceapp/services/client_service.dart';
+import 'dart:math';
 
 Future<void> showInvoiceDialog(BuildContext parentContext) async {
   final _formKey = GlobalKey<FormState>();
 
-  String invoiceNumber = '';
+  String invoiceNumber = 'INV-${Random().nextInt(100000)}'; // Auto-generated
+  int? selectedClientId;
   String billto = '';
   String buyeraddress = '';
   String buyeremail = '';
   String buyerphone = '';
 
   List<Item> allItems = await ItemService.getAllItems();
+  List<Map<String, dynamic>> allClients = await ClientService.getAllClients();
   Map<Item, int> selectedItemsWithQuantity = {};
 
   await showDialog(
@@ -28,31 +32,34 @@ Future<void> showInvoiceDialog(BuildContext parentContext) async {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     TextFormField(
+                      initialValue: invoiceNumber,
                       decoration:
                           const InputDecoration(labelText: 'Invoice Number'),
-                      validator: (value) => value!.isEmpty ? 'Required' : null,
+                      readOnly: true,
                       onSaved: (value) => invoiceNumber = value!,
                     ),
-                    TextFormField(
+                    DropdownButtonFormField<int>(
                       decoration:
-                          const InputDecoration(labelText: 'Buyer Name'),
-                      validator: (value) => value!.isEmpty ? 'Required' : null,
-                      onSaved: (value) => billto = value!,
-                    ),
-                    TextFormField(
-                      decoration:
-                          const InputDecoration(labelText: 'Buyer Address'),
-                      onSaved: (value) => buyeraddress = value ?? '',
-                    ),
-                    TextFormField(
-                      decoration:
-                          const InputDecoration(labelText: 'Buyer Email'),
-                      onSaved: (value) => buyeremail = value ?? '',
-                    ),
-                    TextFormField(
-                      decoration:
-                          const InputDecoration(labelText: 'Buyer Phone'),
-                      onSaved: (value) => buyerphone = value ?? '',
+                          const InputDecoration(labelText: 'Select Client'),
+                      items: allClients.map((client) {
+                        return DropdownMenuItem<int>(
+                          value: client['id'],
+                          child: Text(client['name']),
+                        );
+                      }).toList(),
+                      onChanged: (clientId) async {
+                        setState(() {
+                          selectedClientId = clientId;
+                        });
+                        final selectedClient = allClients
+                            .firstWhere((client) => client['id'] == clientId);
+                        billto = selectedClient['name'];
+                        buyeremail = selectedClient['email'] ?? '';
+                        buyeraddress = selectedClient['address'] ?? '';
+                        buyerphone = selectedClient['phone'] ?? '';
+                      },
+                      validator: (value) =>
+                          value == null ? 'Please select a client' : null,
                     ),
                     const SizedBox(height: 20),
                     const Text("Select Items:",
