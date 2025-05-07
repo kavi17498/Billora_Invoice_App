@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:invoiceapp/services/item_service.dart';
-import 'package:path/path.dart' as p;
 
 class CreateItemPage extends StatefulWidget {
   const CreateItemPage({Key? key}) : super(key: key);
@@ -45,7 +44,7 @@ class _CreateItemPageState extends State<CreateItemPage> {
         quantity: _type == 'good' ? _quantity : null,
       );
       await ItemService.insertItem(item);
-      Navigator.pushNamed(context, "/items");
+      Navigator.pushNamed(context, "/dashboard", arguments: 3);
     }
   }
 
