@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:invoiceapp/screens/items/edit_item.dart';
 import 'package:invoiceapp/services/item_service.dart';
 
 class ItemListPage extends StatefulWidget {
@@ -39,9 +40,26 @@ class _ItemListPageState extends State<ItemListPage> {
                       : const Icon(Icons.image),
                   title: Text(item.name),
                   subtitle: Text(item.type),
-                  trailing: item.type == 'good'
-                      ? Text("Qty: ${item.quantity ?? 0}")
-                      : null,
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (item.type == 'good')
+                        Text("Qty: ${item.quantity ?? 0}"),
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  EditItemPage(itemId: item.id!),
+                            ),
+                          );
+                          _loadItems(); // Refresh the list
+                        },
+                      ),
+                    ],
+                  ),
                 );
               },
             ),
