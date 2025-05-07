@@ -31,7 +31,11 @@ class _AddClientScreenState extends State<AddClientScreen> {
         const SnackBar(content: Text('Client added successfully!')),
       );
 
-      Navigator.pushNamed(context, "/clients");
+      Navigator.pushNamed(
+        context,
+        "/dashboard",
+        arguments: 2,
+      );
     }
   }
 

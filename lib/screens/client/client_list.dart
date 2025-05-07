@@ -28,7 +28,6 @@ class _ClientListScreenState extends State<ClientListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Clients")),
       body: _clients.isEmpty
           ? const Center(child: Text("No clients found."))
           : ListView.builder(
