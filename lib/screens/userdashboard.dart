@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:invoiceapp/screens/Invoicespage.dart';
 import 'package:invoiceapp/screens/client/add_client.dart';
 import 'package:invoiceapp/screens/client/client_list.dart';
+
+import 'package:invoiceapp/screens/clientspage.dart';
+
 import 'package:invoiceapp/screens/estimations.dart';
 import 'package:invoiceapp/screens/invoiceGen/dialogbox.dart';
 import 'package:invoiceapp/screens/items/create_item_page.dart';
@@ -19,11 +22,22 @@ class UserDashboard extends StatefulWidget {
 class _UserDashboardState extends State<UserDashboard> {
   int _selectedIndex = 0;
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args is int) {
+      _selectedIndex = args;
+    }
+  }
+
   final List<Widget> _pages = const [
     Invoicespage(),
     EstimationsPage(),
     ClientListScreen(),
+
     ItemListPage(),
+
     UserDetailsScreen(),
   ];
 
