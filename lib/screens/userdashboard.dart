@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:invoiceapp/screens/Invoicespage.dart';
 import 'package:invoiceapp/screens/client/add_client.dart';
 import 'package:invoiceapp/screens/client/client_list.dart';
+
 import 'package:invoiceapp/screens/clientspage.dart';
+
 import 'package:invoiceapp/screens/estimations.dart';
 import 'package:invoiceapp/screens/invoiceGen/dialogbox.dart';
+import 'package:invoiceapp/screens/items/create_item_page.dart';
+import 'package:invoiceapp/screens/items/item_List.dart';
 import 'package:invoiceapp/screens/itemspage.dart';
 import 'package:invoiceapp/screens/profile/userdetailsscreen.dart';
 
@@ -31,7 +35,9 @@ class _UserDashboardState extends State<UserDashboard> {
     Invoicespage(),
     EstimationsPage(),
     ClientListScreen(),
-    ItemsPage(),
+
+    ItemListPage(),
+
     UserDetailsScreen(),
   ];
 
@@ -54,6 +60,7 @@ class _UserDashboardState extends State<UserDashboard> {
     switch (_selectedIndex) {
       case 0: // Invoices
         return FloatingActionButton(
+          heroTag: "create_invoice",
           onPressed: () {
             showInvoiceDialog(context);
           },
@@ -62,6 +69,7 @@ class _UserDashboardState extends State<UserDashboard> {
         );
       case 1: // Estimations
         return FloatingActionButton(
+          heroTag: "create_estimation",
           onPressed: () {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text("Create estimation")),
@@ -72,6 +80,7 @@ class _UserDashboardState extends State<UserDashboard> {
         );
       case 2: // Clients
         return FloatingActionButton(
+          heroTag: "add_client",
           onPressed: () {
             Navigator.push(
               context,
@@ -83,9 +92,11 @@ class _UserDashboardState extends State<UserDashboard> {
         );
       case 3: // Items
         return FloatingActionButton(
+          heroTag: "add_item",
           onPressed: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Add new item")),
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const CreateItemPage()),
             );
           },
           backgroundColor: const Color(0xFF4D7CFE),
