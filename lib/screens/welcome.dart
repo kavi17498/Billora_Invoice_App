@@ -37,7 +37,7 @@ class Welcome extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, "/signin");
+                Navigator.pushNamed(context, "/businessName");
               },
               child: Container(
                 height: MediaQuery.of(context).size.height * 0.06,

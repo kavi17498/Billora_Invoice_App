@@ -1,3 +1,4 @@
+import 'package:invoiceapp/services/item_service.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'client_service.dart';
@@ -48,10 +49,12 @@ class DatabaseService {
         print("User table created successfully.");
 
         await ClientService.createClientTable(db);
+        await ItemService.createItemTable(db);
       },
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 2) {
           await ClientService.createClientTable(db);
+          await ItemService.createItemTable(db);
         }
       },
     );
@@ -98,5 +101,11 @@ class DatabaseService {
       whereArgs: [id],
     );
     return result.isNotEmpty ? result.first : null;
+  }
+
+  Future<bool> doesUserExist() async {
+    final db = await getdatabase();
+    final result = await db.query(_userTableName, limit: 1);
+    return result.isNotEmpty;
   }
 }

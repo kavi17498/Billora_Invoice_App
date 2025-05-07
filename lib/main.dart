@@ -1,11 +1,13 @@
 import "package:flutter/material.dart";
 import "package:google_fonts/google_fonts.dart";
+import "package:invoiceapp/Wrapper.dart";
 import "package:invoiceapp/screens/BusinessName.dart";
 import "package:invoiceapp/screens/CompanyProfile.dart";
 import "package:invoiceapp/screens/SignInpage.dart";
 import "package:invoiceapp/screens/UploadLogo.dart";
 import "package:invoiceapp/screens/client/add_client.dart";
 import "package:invoiceapp/screens/client/client_list.dart";
+import "package:invoiceapp/screens/items/item_List.dart";
 import "package:invoiceapp/screens/userdashboard.dart";
 import "package:invoiceapp/screens/welcome.dart";
 
@@ -25,7 +27,7 @@ class Myapp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: GoogleFonts.poppins().fontFamily,
       ),
-      home: Welcome(),
+      home: Wrapper(),
       routes: {
         "/signin": (context) => const SignInpage(),
         "/businessName": (context) => const Businessname(),
@@ -34,6 +36,7 @@ class Myapp extends StatelessWidget {
         "/dashboard": (context) => const UserDashboard(),
         "/clients": (context) => const ClientListScreen(),
         "/addclient": (context) => const AddClientScreen(),
+        "/items": (context) => const ItemListPage(),
       },
     );
   }
