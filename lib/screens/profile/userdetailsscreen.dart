@@ -1,5 +1,6 @@
-import 'dart:io'; // Needed to use File
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:invoiceapp/services/database_service.dart';
 
 class UserDetailsScreen extends StatefulWidget {
@@ -27,9 +28,65 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     });
   }
 
+  Future<void> updateUserField(String key, String newValue) async {
+    await DatabaseService.instance.updateallUserDetails(
+      userId: 1,
+      name: key == 'name' ? newValue : null,
+      note: key == 'note' ? newValue : null,
+      address: key == 'address' ? newValue : null,
+      phone: key == 'phone' ? newValue : null,
+      website: key == 'website' ? newValue : null,
+      email: key == 'email' ? newValue : null,
+    );
+    await loadUser();
+  }
+
+  void showEditDialog(String fieldKey, String label, String? currentValue) {
+    final controller = TextEditingController(text: currentValue);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Edit $label"),
+        content: TextField(
+          controller: controller,
+          decoration: InputDecoration(labelText: label),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await updateUserField(fieldKey, controller.text);
+              Navigator.pop(context);
+            },
+            child: const Text("Save"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> pickAndSaveImage() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(source: ImageSource.gallery);
+    if (picked != null) {
+      final db = await DatabaseService.instance.getdatabase();
+      await db.update(
+        'user',
+        {'company_logo_url': picked.path},
+        where: 'id = ?',
+        whereArgs: [1],
+      );
+      await loadUser();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: const Text("Profile")),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : userData == null
@@ -38,54 +95,60 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                   padding: const EdgeInsets.all(16.0),
                   child: ListView(
                     children: [
-                      // Show logo image if file path exists
-                      if (userData!['company_logo_url'] != null &&
-                          userData!['company_logo_url'].toString().isNotEmpty)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Company Logo",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Center(
-                              child: Image.file(
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Company Logo",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.edit),
+                            onPressed: pickAndSaveImage,
+                          ),
+                        ],
+                      ),
+                      Center(
+                        child: userData!['company_logo_url'] == null
+                            ? const Text("No image.")
+                            : Image.file(
                                 File(userData!['company_logo_url']),
                                 width: 150,
                                 height: 150,
                                 fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return const Text(
-                                    "Image failed to load.",
-                                    style: TextStyle(color: Colors.red),
-                                  );
-                                },
                               ),
-                            ),
-                            const SizedBox(height: 20),
-                          ],
-                        ),
-                      buildDetailTile("Name", userData!['name']),
-                      buildDetailTile("Email", userData!['email']),
-                      buildDetailTile("Phone", userData!['phone']),
-                      buildDetailTile("Address", userData!['address']),
-                      buildDetailTile("Note", userData!['note']),
-                      buildDetailTile("Website", userData!['website']),
-                      // buildDetailTile("State", userData!['state']),
+                      ),
+                      const SizedBox(height: 20),
+                      buildEditableTile("Name", userData!['name'],
+                          fieldKey: "name"),
+                      buildEditableTile("Email", userData!['email'],
+                          fieldKey: "email"),
+                      buildEditableTile("Phone", userData!['phone'],
+                          fieldKey: "phone"),
+                      buildEditableTile("Address", userData!['address'],
+                          fieldKey: "address"),
+                      buildEditableTile("Note", userData!['note'],
+                          fieldKey: "note"),
+                      buildEditableTile("Website", userData!['website'],
+                          fieldKey: "website"),
                     ],
                   ),
                 ),
     );
   }
 
-  Widget buildDetailTile(String title, String? value) {
+  Widget buildEditableTile(String title, String? value,
+      {String? fieldKey, bool editable = true}) {
     return ListTile(
       title: Text(title),
       subtitle: Text(value ?? "Not available"),
+      trailing: editable && fieldKey != null
+          ? IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: () => showEditDialog(fieldKey, title, value),
+            )
+          : null,
     );
   }
 }

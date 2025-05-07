@@ -5,10 +5,31 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        "Settings Page",
-        style: TextStyle(fontSize: 20, color: Colors.grey),
+    return Scaffold(
+      body: ListView(
+        children: [
+          ListTile(
+            leading: Icon(Icons.person),
+            title: Text("Profile Settings"),
+            trailing: Icon(Icons.arrow_forward_ios),
+            onTap: () {
+              Navigator.pushNamed(context,
+                  "/prfile"); // adjust to "/profile" if that's the correct route
+            },
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.description),
+            title: Text("Change Template"),
+            trailing: Icon(Icons.arrow_forward_ios),
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.palette),
+            title: Text("Change Theme"),
+            trailing: Icon(Icons.arrow_forward_ios),
+          ),
+        ],
       ),
     );
   }

@@ -71,28 +71,6 @@ class DatabaseService {
     print("User inserted successfully.");
   }
 
-  Future<void> updateUserDetails({
-    required int userId,
-    String? address,
-    String? phone,
-    String? website,
-    String? email,
-  }) async {
-    final db = await getdatabase();
-    await db.update(
-      _userTableName,
-      {
-        if (address != null) _columnAddress: address,
-        if (phone != null) _columnPhone: phone,
-        if (website != null) _columnWebsite: website,
-        if (email != null) _columnEmail: email,
-      },
-      where: '$_columnId = ?',
-      whereArgs: [userId],
-    );
-    print("User updated successfully.");
-  }
-
   Future<Map<String, dynamic>?> getUserById(int id) async {
     final db = await getdatabase();
     final result = await db.query(
@@ -107,5 +85,54 @@ class DatabaseService {
     final db = await getdatabase();
     final result = await db.query(_userTableName, limit: 1);
     return result.isNotEmpty;
+  }
+
+  Future<void> updateUserDetails({
+    required int userId,
+    String? address,
+    String? phone,
+    String? website,
+    String? email,
+    String? companyLogoUrl,
+  }) async {
+    final db = await getdatabase();
+    await db.update(
+      _userTableName,
+      {
+        if (address != null) _columnAddress: address,
+        if (phone != null) _columnPhone: phone,
+        if (website != null) _columnWebsite: website,
+        if (email != null) _columnEmail: email,
+        if (companyLogoUrl != null) _columnCompanyLogoUrl: companyLogoUrl,
+      },
+      where: '$_columnId = ?',
+      whereArgs: [userId],
+    );
+  }
+
+  Future<void> updateallUserDetails({
+    required int userId,
+    String? address,
+    String? phone,
+    String? website,
+    String? email,
+    String? name, // <-- Add this
+    String? note, // <-- And this
+  }) async {
+    final db = await getdatabase();
+    await db.update(
+      _userTableName,
+      {
+        if (address != null) _columnAddress: address,
+        if (phone != null) _columnPhone: phone,
+        if (website != null) _columnWebsite: website,
+        if (email != null) _columnEmail: email,
+        if (name != null) _columnName: name, // <-- Update name
+        if (note != null) _columnNote: note, // <-- Update note
+      },
+      where: '$_columnId = ?',
+      whereArgs: [userId],
+    );
+    print("User updated successfully.");
   }
 }
