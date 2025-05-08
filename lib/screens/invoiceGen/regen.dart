@@ -9,7 +9,7 @@ import 'package:pdf/pdf.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:invoiceapp/services/item_service.dart';
 
-Future<void> generateAndSharePdf(
+Future<void> regen(
   BuildContext context,
   String invoiceNumber,
   String billto,
@@ -173,16 +173,16 @@ Future<void> generateAndSharePdf(
 
     Navigator.pop(context); // Close loading dialog
 
-    final invoiceId = await InvoiceService().saveInvoice(
-      invoiceNumber: invoiceNumber,
-      billTo: billto,
-      address: buyerAddress,
-      email: buyerEmail,
-      phone: buyerPhone,
-      totalPrice: totalPrice,
-      selectedItems: selectedItems,
-    );
-    print("Invoice saved with ID: $invoiceId");
+    // final invoiceId = await InvoiceService().saveInvoice(
+    //   invoiceNumber: invoiceNumber,
+    //   billTo: billto,
+    //   address: buyerAddress,
+    //   email: buyerEmail,
+    //   phone: buyerPhone,
+    //   totalPrice: totalPrice,
+    //   selectedItems: selectedItems,
+    // );
+    // print("Invoice saved with ID: $invoiceId");
 
     Navigator.push(
       context,

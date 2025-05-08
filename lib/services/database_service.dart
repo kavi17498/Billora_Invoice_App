@@ -1,3 +1,4 @@
+import 'package:invoiceapp/services/invoice_service.dart';
 import 'package:invoiceapp/services/item_service.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -50,11 +51,13 @@ class DatabaseService {
 
         await ClientService.createClientTable(db);
         await ItemService.createItemTable(db);
+        await InvoiceService.createInvoiceTables(db);
       },
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 2) {
           await ClientService.createClientTable(db);
           await ItemService.createItemTable(db);
+          await InvoiceService.createInvoiceTables(db); // Add this
         }
       },
     );

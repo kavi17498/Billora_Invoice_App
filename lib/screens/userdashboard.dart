@@ -29,7 +29,7 @@ class _UserDashboardState extends State<UserDashboard> {
   }
 
   final List<Widget> _pages = const [
-    Invoicespage(),
+    InvoiceListPage(),
     Analyzepage(),
     ClientListScreen(),
     ItemListPage(),
