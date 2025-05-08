@@ -1,4 +1,4 @@
-package com.example.invoiceapp
+package com.kcodz.billora
 
 import io.flutter.embedding.android.FlutterActivity
 
