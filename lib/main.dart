@@ -4,6 +4,7 @@ import "package:invoiceapp/Wrapper.dart";
 import "package:invoiceapp/screens/BusinessName.dart";
 import "package:invoiceapp/screens/CompanyProfile.dart";
 import "package:invoiceapp/screens/SignInpage.dart";
+import "package:invoiceapp/screens/Unnecssary/Comingsoon.dart";
 import "package:invoiceapp/screens/UploadLogo.dart";
 import "package:invoiceapp/screens/client/add_client.dart";
 import "package:invoiceapp/screens/client/client_list.dart";
@@ -40,6 +41,7 @@ class Myapp extends StatelessWidget {
         "/items": (context) => const ItemListPage(),
         "/prfile": (context) => const UserDetailsScreen(),
         "/welcome": (context) => const Welcome(),
+        "/commingsoon": (context) => const ComingSoon(),
       },
     );
   }
