@@ -48,7 +48,7 @@ class _InvoiceListPageState extends State<InvoiceListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: invoices.isEmpty
-          ? const Center(child: Text("No invoices found."))
+          ? const Center(child: Text("Crete a Client And Items First.."))
           : ListView.builder(
               itemCount: invoices.length,
               itemBuilder: (context, index) {

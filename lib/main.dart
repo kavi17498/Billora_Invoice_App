@@ -10,6 +10,7 @@ import "package:invoiceapp/screens/client/client_list.dart";
 import "package:invoiceapp/screens/items/item_List.dart";
 import "package:invoiceapp/screens/profile/userdetailsscreen.dart";
 import "package:invoiceapp/screens/userdashboard.dart";
+import "package:invoiceapp/screens/welcome.dart";
 
 void main() {
   runApp(const Myapp());
@@ -38,6 +39,7 @@ class Myapp extends StatelessWidget {
         "/addclient": (context) => const AddClientScreen(),
         "/items": (context) => const ItemListPage(),
         "/prfile": (context) => const UserDetailsScreen(),
+        "/welcome": (context) => const Welcome(),
       },
     );
   }

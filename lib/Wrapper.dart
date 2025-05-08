@@ -24,7 +24,7 @@ class _WrapperState extends State<Wrapper> {
     if (userExists) {
       Navigator.pushReplacementNamed(context, "/dashboard");
     } else {
-      Navigator.pushReplacementNamed(context, "/signin");
+      Navigator.pushReplacementNamed(context, "/welcome");
     }
   }
 

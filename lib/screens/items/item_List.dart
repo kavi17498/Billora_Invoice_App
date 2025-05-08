@@ -28,7 +28,7 @@ class _ItemListPageState extends State<ItemListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: items.isEmpty
-          ? const Center(child: Text("No items yet."))
+          ? const Center(child: Text("Create Your First Item..."))
           : ListView.builder(
               itemCount: items.length,
               itemBuilder: (ctx, index) {

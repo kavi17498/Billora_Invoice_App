@@ -38,7 +38,7 @@ class _UserDashboardState extends State<UserDashboard> {
 
   final List<String> _titles = const [
     "Invoices",
-    "Analyze",
+    "Financial Analysis",
     "Clients",
     "Items",
     "Settings",

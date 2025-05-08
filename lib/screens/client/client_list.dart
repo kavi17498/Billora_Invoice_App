@@ -29,7 +29,7 @@ class _ClientListScreenState extends State<ClientListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _clients.isEmpty
-          ? const Center(child: Text("No clients found."))
+          ? const Center(child: Text("Create Your First Client"))
           : ListView.builder(
               itemCount: _clients.length,
               itemBuilder: (context, index) {
