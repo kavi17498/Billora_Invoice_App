@@ -30,7 +30,14 @@ class _UploadLogoScreenState extends State<UploadLogoScreen> {
   }
 
   Future<void> _saveToLocalAndDatabase() async {
-    if (_imageFile == null) return;
+    if (_imageFile == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please select an image"),
+        ),
+      );
+      return;
+    }
 
     final appDir = await getApplicationDocumentsDirectory();
     final fileName = p.basename(_imageFile!.path);
@@ -50,8 +57,8 @@ class _UploadLogoScreenState extends State<UploadLogoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: SafeArea(
+    return Scaffold(
+      body: SafeArea(
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

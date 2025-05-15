@@ -19,8 +19,8 @@ class _BusinessnameState extends State<Businessname> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: Center(
+    return Scaffold(
+      body: Center(
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Column(
@@ -55,7 +55,7 @@ class _BusinessnameState extends State<Businessname> {
                     if (_businessName == null || _businessName!.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text("Please enter a business name"),
+                          content: Text("Please enter a business name ..!"),
                         ),
                       );
                       return;
@@ -69,6 +69,7 @@ class _BusinessnameState extends State<Businessname> {
                       );
                       return;
                     }
+
                     _databaseService.insertUser(
                       _businessName!,
                     );

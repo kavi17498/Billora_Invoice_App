@@ -24,3 +24,10 @@ TextStyle buttonTextStyle = TextStyle(
   fontSize: 20,
   fontWeight: FontWeight.w400,
 );
+
+//App inside
+TextStyle heading = TextStyle(
+  color: textColor,
+  fontSize: 18,
+  fontWeight: FontWeight.bold,
+);

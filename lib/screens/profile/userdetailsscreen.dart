@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:invoiceapp/constrains/Colors.dart';
+import 'package:invoiceapp/constrains/TextStyles.dart';
 import 'package:invoiceapp/services/database_service.dart';
 
 class UserDetailsScreen extends StatefulWidget {
@@ -22,6 +24,8 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
 
   Future<void> loadUser() async {
     final user = await DatabaseService.instance.getUserById(1);
+    // Check if the widget is still in the widget tree before calling setState
+    if (!mounted) return;
     setState(() {
       userData = user;
       isLoading = false;
@@ -38,6 +42,8 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
       website: key == 'website' ? newValue : null,
       email: key == 'email' ? newValue : null,
     );
+    // You might also want to add a mounted check here
+    if (!mounted) return;
     await loadUser();
   }
 
@@ -54,14 +60,24 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
+            child: Text(
+              "Cancel",
+              style: TextStyle(color: textColor),
+            ),
           ),
           ElevatedButton(
             onPressed: () async {
               await updateUserField(fieldKey, controller.text);
               Navigator.pop(context);
             },
-            child: const Text("Save"),
+            child: Text(
+              "Save",
+              style: TextStyle(
+                color: textColor,
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
           ),
         ],
       ),
@@ -71,6 +87,8 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   Future<void> pickAndSaveImage() async {
     final picker = ImagePicker();
     final picked = await picker.pickImage(source: ImageSource.gallery);
+    if (!mounted) return; // 👈 prevent crash if user navigated back
+
     if (picked != null) {
       final db = await DatabaseService.instance.getdatabase();
       await db.update(
@@ -79,6 +97,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
         where: 'id = ?',
         whereArgs: [1],
       );
+      if (!mounted) return; // 👈 double-check before setState/loadUser
       await loadUser();
     }
   }
@@ -95,29 +114,59 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                   padding: const EdgeInsets.all(16.0),
                   child: ListView(
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            "Company Logo",
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.edit),
-                            onPressed: pickAndSaveImage,
-                          ),
-                        ],
+                      Center(
+                        child: Text("Company Logo", style: heading),
+                      ),
+                      SizedBox(
+                        height: 10,
                       ),
                       Center(
-                        child: userData!['company_logo_url'] == null
-                            ? const Text("No image.")
-                            : Image.file(
-                                File(userData!['company_logo_url']),
-                                width: 150,
-                                height: 150,
-                                fit: BoxFit.cover,
+                        child: Stack(
+                          children: [
+                            // Circular profile picture with border
+                            Container(
+                              width: 150,
+                              height: 150,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                    color: secondaryColor,
+                                    width: 3), // Border color & thickness
+                                image: userData!['company_logo_url'] == null
+                                    ? null
+                                    : DecorationImage(
+                                        image: FileImage(File(
+                                            userData!['company_logo_url'])),
+                                        fit: BoxFit.cover,
+                                      ),
                               ),
+                              child: userData!['company_logo_url'] == null
+                                  ? const Center(child: Text("No image."))
+                                  : null,
+                            ),
+
+                            // Positioned edit icon on top right corner of the circle
+                            Positioned(
+                              right: 0,
+                              top: 0,
+                              child: InkWell(
+                                onTap: pickAndSaveImage,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.black54,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  padding: const EdgeInsets.all(6),
+                                  child: const Icon(
+                                    Icons.edit,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       const SizedBox(height: 20),
                       buildEditableTile("Name", userData!['name'],

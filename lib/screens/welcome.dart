@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:invoiceapp/constrains/Colors.dart';
+import 'package:lottie/lottie.dart';
 import '../constrains/TextStyles.dart';
 
 class Welcome extends StatelessWidget {
@@ -16,10 +17,10 @@ class Welcome extends StatelessWidget {
             SizedBox(
               height: 20,
             ),
-            Image.asset(
-              "assets/images/welcome.png",
-              width: 250,
-              height: 250,
+            Lottie.asset(
+              "assets/lottie/k.json",
+              width: 300,
+              height: 300,
               fit: BoxFit.fill,
             ),
             SizedBox(

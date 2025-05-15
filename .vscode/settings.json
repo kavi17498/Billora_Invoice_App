@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "D:/My Companies/Invoice App/invoiceapp/linux"
+    "cmake.sourceDirectory": "D:/My Companies/Invoice App/invoiceapp/linux",
+    "java.configuration.updateBuildConfiguration": "interactive"
 }
