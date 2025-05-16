@@ -48,7 +48,8 @@ class _UploadLogoScreenState extends State<UploadLogoScreen> {
     await db.update(
       'user',
       {'company_logo_url': savedImage.path},
-      where: 'id = ?', whereArgs: [1], // adjust for your app's logic
+      where: 'id = ?',
+      whereArgs: [1],
     );
 
     print('Logo saved locally at: ${savedImage.path}');
@@ -67,31 +68,63 @@ class _UploadLogoScreenState extends State<UploadLogoScreen> {
               Text('Upload Your\nBusiness Logo',
                   textAlign: TextAlign.center, style: primaryTextStyle),
               const SizedBox(height: 30),
-              GestureDetector(
-                onTap: _pickImage,
-                child: Container(
-                  height: 180,
-                  width: 180,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(10),
-                    image: _imageFile != null
-                        ? DecorationImage(
-                            image: FileImage(_imageFile!), fit: BoxFit.cover)
-                        : null,
+
+              // ✅ Updated section with Stack
+              Stack(
+                alignment: Alignment.topRight,
+                children: [
+                  GestureDetector(
+                    onTap: _pickImage,
+                    child: Container(
+                      height: 180,
+                      width: 180,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(10),
+                        image: (_imageFile != null && _imageFile!.existsSync())
+                            ? DecorationImage(
+                                image: FileImage(_imageFile!),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
+                      ),
+                      child: _imageFile == null
+                          ? const Icon(Icons.upload_file,
+                              size: 50, color: Colors.grey)
+                          : null,
+                    ),
                   ),
-                  child: _imageFile == null
-                      ? const Icon(Icons.upload_file,
-                          size: 50, color: Colors.grey)
-                      : null,
-                ),
+                  if (_imageFile != null)
+                    Positioned(
+                      right: 4,
+                      top: 4,
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _imageFile = null;
+                          });
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.6),
+                            shape: BoxShape.circle,
+                          ),
+                          padding: const EdgeInsets.all(6),
+                          child: const Icon(Icons.close,
+                              color: Colors.white, size: 20),
+                        ),
+                      ),
+                    ),
+                ],
               ),
+
               const SizedBox(height: 30),
               Buttoncomponent(
-                  text: "Continue",
-                  onPressed: _saveToLocalAndDatabase,
-                  color: primaryColor,
-                  textStyle: buttonTextStyle),
+                text: "Continue",
+                onPressed: _saveToLocalAndDatabase,
+                color: primaryColor,
+                textStyle: buttonTextStyle,
+              ),
               const SizedBox(height: 5),
               SkipButton(onTap: () {
                 Navigator.pushNamed(context, "/companyinfo");
