@@ -79,38 +79,71 @@ class InvoiceService {
     return invoiceId;
   }
 
+// Fixed getItemsForInvoice method for invoice_service.dart
+
   Future<Map<Item, int>> getItemsForInvoice(int invoiceId) async {
     final db = await DatabaseService.instance.getdatabase();
+    final Map<Item, int> selectedItems = {};
 
-    final result = await db.rawQuery('''
-    SELECT ii.quantity, i.*
-    FROM invoice_items ii
-    JOIN item i ON ii.item_id = i.id
-    WHERE ii.invoice_id = ?
-  ''', [invoiceId]);
+    try {
+      final result = await db.rawQuery('''
+      SELECT ii.quantity, i.*
+      FROM invoice_items ii
+      JOIN item i ON ii.item_id = i.id
+      WHERE ii.invoice_id = ?
+    ''', [invoiceId]);
 
-    Map<Item, int> selectedItems = {};
+      for (var row in result) {
+        // Handle null values carefully
+        final id = row['id'];
+        final name = row['name'];
+        final description = row['description'];
+        final price = row['price'];
+        final cost = row['cost'];
+        final imagePath = row['image_path'];
+        final type = row['type'];
+        final quantity = row['quantity'];
 
-    for (var row in result) {
-      final item = Item(
-        id: row['id'] as int,
-        name: row['name'] as String,
-        description: row['description'] as String,
-        price: row['price'] is int
-            ? (row['price'] as int).toDouble()
-            : row['price'] as double,
-        cost: row['cost'] is int
-            ? (row['cost'] as int).toDouble()
-            : row['cost'] as double,
-        imagePath: row['image_path'] as String,
-        type: row['type'] as String,
-        quantity: row['quantity'] as int?, // optional field
-      );
+        // Skip this item if essential fields are null
+        if (id == null || name == null || type == null || price == null) {
+          print(
+              'Warning: Found item with null essential fields for invoice $invoiceId');
+          continue;
+        }
 
-      selectedItems[item] = row['quantity'] as int;
+        // Create item with proper null checks and type conversions
+        final item = Item(
+          id: id as int,
+          name: name as String,
+          description: description as String? ?? '',
+          price: price is int ? (price as int).toDouble() : price as double,
+          cost:
+              cost is int ? (cost as int).toDouble() : (cost as double?) ?? 0.0,
+          imagePath: imagePath as String? ?? '',
+          type: type as String,
+          // Handle quantity field for the Item object separately from the invoice quantity
+          quantity: null, // Default to null since this is the item definition
+        );
+
+        // Handle invoice item quantity, defaulting to 1 for services as you mentioned
+        int itemQuantity;
+        if (quantity == null) {
+          // If quantity is null, use 1 as default for services and 0 for goods
+          itemQuantity = (type.toLowerCase() == 'service') ? 1 : 0;
+          print(
+              'Warning: Null quantity found for item ${item.name}, defaulting to $itemQuantity');
+        } else {
+          itemQuantity = quantity as int;
+        }
+
+        selectedItems[item] = itemQuantity;
+      }
+
+      return selectedItems;
+    } catch (e) {
+      print('Error fetching items for invoice: $e');
+      return {};
     }
-
-    return selectedItems;
   }
 
   Future<List<Map<String, dynamic>>> getAllInvoices() async {
