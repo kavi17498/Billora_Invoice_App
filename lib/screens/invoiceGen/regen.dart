@@ -16,10 +16,19 @@ Future<void> regen(
   String buyerAddress,
   String buyerEmail,
   String buyerPhone,
-  Map<Item, int> selectedItems,
+  Map<Item, int?> selectedItems,
 ) async {
+  print('[REGEN] Starting invoice generation...');
   final pdf = pw.Document();
+
+  print('[REGEN] Fetching user data...');
   final userData = await DatabaseService.instance.getUserById(1);
+  print('[REGEN] User data retrieved: $userData');
+
+  if (!context.mounted) {
+    print('[REGEN] Context not mounted. Exiting.');
+    return;
+  }
 
   showDialog(
     context: context,
@@ -38,20 +47,30 @@ Future<void> regen(
   try {
     pw.MemoryImage? companyLogo;
     final companyLogoUrl = userData?['company_logo_url'] ?? '';
+    print('[REGEN] Company logo path: $companyLogoUrl');
 
     if (companyLogoUrl.isNotEmpty) {
       final file = File(companyLogoUrl);
       if (await file.exists()) {
+        print('[REGEN] Company logo file exists, reading bytes...');
         final imageBytes = await file.readAsBytes();
         companyLogo = pw.MemoryImage(imageBytes);
+        print('[REGEN] Company logo loaded.');
+      } else {
+        print('[REGEN] Company logo file not found.');
       }
     }
 
     double totalPrice = 0;
+    print('[REGEN] Calculating total price...');
     selectedItems.forEach((item, quantity) {
-      totalPrice += item.price * quantity;
+      final safeQty = quantity ?? 1;
+      totalPrice += item.price * safeQty;
+      print('[REGEN] Item: ${item.name}, Qty: $safeQty, Price: ${item.price}');
     });
+    print('[REGEN] Total price: $totalPrice');
 
+    print('[REGEN] Adding PDF page...');
     pdf.addPage(
       pw.Page(
         pageFormat: PdfPageFormat.a4,
@@ -86,10 +105,10 @@ Future<void> regen(
               pw.Table(
                 border: pw.TableBorder.all(),
                 columnWidths: {
-                  0: const pw.FlexColumnWidth(3), // Item Name
-                  1: const pw.FlexColumnWidth(2), // Type
-                  2: const pw.FlexColumnWidth(1), // Qty
-                  3: const pw.FlexColumnWidth(2), // Price
+                  0: const pw.FlexColumnWidth(3),
+                  1: const pw.FlexColumnWidth(2),
+                  2: const pw.FlexColumnWidth(1),
+                  3: const pw.FlexColumnWidth(2),
                 },
                 children: [
                   pw.TableRow(
@@ -123,7 +142,7 @@ Future<void> regen(
                   ),
                   ...selectedItems.entries.map((entry) {
                     final item = entry.key;
-                    final qty = entry.value;
+                    final qty = entry.value ?? 1;
                     return pw.TableRow(
                       children: [
                         pw.Padding(
@@ -166,34 +185,47 @@ Future<void> regen(
         },
       ),
     );
+    print('[REGEN] PDF page added successfully.');
 
     final output = await getTemporaryDirectory();
-    final file = File('${output.path}/invoice_$invoiceNumber.pdf');
+    final filePath = '${output.path}/invoicenew_$invoiceNumber.pdf';
+    final file = File(filePath);
+    print('[REGEN] Saving PDF to: $filePath');
+
     await file.writeAsBytes(await pdf.save());
+    print('[REGEN] PDF saved successfully.');
 
-    Navigator.pop(context); // Close loading dialog
+    if (context.mounted && Navigator.canPop(context)) {
+      Navigator.pop(context);
+      print('[REGEN] Closed loading dialog.');
+    }
 
-    // final invoiceId = await InvoiceService().saveInvoice(
-    //   invoiceNumber: invoiceNumber,
-    //   billTo: billto,
-    //   address: buyerAddress,
-    //   email: buyerEmail,
-    //   phone: buyerPhone,
-    //   totalPrice: totalPrice,
-    //   selectedItems: selectedItems,
-    // );
-    // print("Invoice saved with ID: $invoiceId");
+    if (!context.mounted) {
+      print('[REGEN] Context no longer mounted. Exiting before preview.');
+      return;
+    }
 
+    print('[REGEN] Opening PDF preview...');
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => PdfPreviewPage(filePath: file.path)),
     );
 
+    print('[REGEN] Sharing PDF...');
     await Share.shareXFiles([XFile(file.path)], text: 'Here is your invoice!');
-  } catch (e) {
-    Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error generating PDF: $e')),
-    );
+    print('[REGEN] PDF shared successfully.');
+  } catch (e, stackTrace) {
+    print('[REGEN] ERROR during PDF generation: $e');
+    print('[REGEN] STACKTRACE:\n$stackTrace');
+
+    if (context.mounted && Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
+
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error generating PDF: $e')),
+      );
+    }
   }
 }
