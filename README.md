@@ -26,8 +26,6 @@
 
 ---
 
----
-
 ## 🛠️ Tech Stack
 
 - Platform: Android
