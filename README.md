@@ -1,16 +1,37 @@
-# invoiceapp
+# Billora - Offline Invoice Generator App
 
-A new Flutter project.
+**Billora** is a lightweight, fully offline and ads-free invoice generator application designed to streamline your billing process. Whether you're a freelancer, small business owner, or service provider, Billora helps you generate professional invoices with ease — no internet connection required.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## ✨ Features
 
-A few resources to get you started if this is your first Flutter project:
+- 📄 **Create and manage invoices**  
+  Quickly generate invoices using selected client, item, and user profile data.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- 👤 **Client Management**  
+  Add, update, and delete client records with ease.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- 📦 **Item Management**  
+  Manage billable items or services with price, quantity, and description.
+
+- 🧑 **User Profile**  
+  Customize your invoices with your business/user information.
+
+- 📴 **Fully Offline**  
+  Works without any internet connection. All data is stored locally on your device.
+
+- 🚫 **Ads-Free Experience**  
+  Enjoy a clean and distraction-free environment with zero advertisements.
+
+---
+
+## 🛠️ Tech Stack
+
+- Platform: Android
+- Framework: Flutter
+- Local Storage: SQLite
+
+---
+
+
