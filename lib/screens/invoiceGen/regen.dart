@@ -181,7 +181,6 @@ class _RegenPageState extends State<RegenPage> {
     generatePdf();
 
     return Scaffold(
-      appBar: AppBar(title: Text('Generating Invoice PDF')),
       body: Center(
         child: isGenerating
             ? CircularProgressIndicator()
