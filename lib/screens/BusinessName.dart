@@ -41,7 +41,7 @@ class _BusinessnameState extends State<Businessname> {
                   },
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
+                      borderRadius: BorderRadius.circular(15),
                       borderSide: BorderSide(color: primaryColor),
                     ),
                     hintText: "Business Name",

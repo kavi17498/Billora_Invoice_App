@@ -94,6 +94,7 @@ class _CreateItemPageState extends State<CreateItemPage> {
                 ),
               const SizedBox(height: 10),
               ElevatedButton.icon(
+                style: ButtonStyle(),
                 onPressed: _pickImage,
                 icon: const Icon(Icons.image),
                 label: const Text("Pick Image"),

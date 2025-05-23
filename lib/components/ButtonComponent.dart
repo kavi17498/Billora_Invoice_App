@@ -21,7 +21,7 @@ class Buttoncomponent extends StatelessWidget {
         height: MediaQuery.of(context).size.height * 0.06,
         width: MediaQuery.of(context).size.width * 0.5,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(15),
           color: color,
         ),
         alignment: Alignment.center,
