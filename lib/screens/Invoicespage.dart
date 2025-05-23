@@ -1,11 +1,8 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
-import 'package:invoiceapp/screens/invoiceGen/generatapdf.dart';
+import 'package:invoiceapp/screens/invoiceGen/generatapdf.dart'; // RegenPage import
 import 'package:invoiceapp/screens/invoiceGen/regen.dart';
 import 'package:invoiceapp/services/invoice_service.dart';
 import 'package:invoiceapp/services/item_service.dart';
-// where generateAndSharePdf is located
 
 class InvoiceListPage extends StatefulWidget {
   const InvoiceListPage({Key? key}) : super(key: key);
@@ -30,19 +27,25 @@ class _InvoiceListPageState extends State<InvoiceListPage> {
     });
   }
 
+  // This is where we call RegenPage to handle the PDF generation process.
   Future<void> regenerateInvoice(Map<String, dynamic> invoice) async {
     // Fetch items and quantities from DB
     Map<Item, int> selectedItems =
         await InvoiceService().getItemsForInvoice(invoice['id']);
 
-    await regen(
+    // Navigate to RegenPage and pass all required parameters for PDF generation.
+    Navigator.push(
       context,
-      invoice['invoice_number'],
-      invoice['bill_to'],
-      invoice['address'],
-      invoice['email'],
-      invoice['phone'],
-      selectedItems,
+      MaterialPageRoute(
+        builder: (_) => RegenPage(
+          invoiceNumber: invoice['invoice_number'],
+          billTo: invoice['bill_to'],
+          buyerAddress: invoice['address'],
+          buyerEmail: invoice['email'],
+          buyerPhone: invoice['phone'],
+          selectedItems: selectedItems,
+        ),
+      ),
     );
   }
 
@@ -50,7 +53,7 @@ class _InvoiceListPageState extends State<InvoiceListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: invoices.isEmpty
-          ? const Center(child: Text("Crete a Client And Items First.."))
+          ? const Center(child: Text("Create a Client And Items First.."))
           : ListView.builder(
               itemCount: invoices.length,
               itemBuilder: (context, index) {
