@@ -18,18 +18,25 @@ Future<void> regen(
   String buyerPhone,
   Map<Item, int?> selectedItems,
 ) async {
-  print('[REGEN] Starting invoice generation...');
+  print('[REGEN] Starting invoice generation.');
   final pdf = pw.Document();
 
-  print('[REGEN] Fetching user data...');
+  print('[REGEN] Fetching user data.');
   final userData = await DatabaseService.instance.getUserById(1);
-  print('[REGEN] User data retrieved: $userData');
+  print('[REGEN] Fetched user data: $userData');
+
+  if (userData == null || !userData.containsKey('company_logo_url')) {
+    print(userData);
+    print('[REGEN] User data or company logo is missing. Exiting.');
+    return;
+  }
 
   if (!context.mounted) {
     print('[REGEN] Context not mounted. Exiting.');
     return;
   }
 
+  // Show loading dialog
   showDialog(
     context: context,
     barrierDismissible: false,
@@ -45,36 +52,43 @@ Future<void> regen(
   );
 
   try {
+    // Handle logo loading
     pw.MemoryImage? companyLogo;
-    final companyLogoUrl = userData?['company_logo_url'] ?? '';
+    final companyLogoUrl = userData['company_logo_url'];
     print('[REGEN] Company logo path: $companyLogoUrl');
 
     if (companyLogoUrl.isNotEmpty) {
       final file = File(companyLogoUrl);
+      print('[REGEN] File exists: ${await file.exists()}');
       if (await file.exists()) {
         print('[REGEN] Company logo file exists, reading bytes...');
         final imageBytes = await file.readAsBytes();
         companyLogo = pw.MemoryImage(imageBytes);
-        print('[REGEN] Company logo loaded.');
       } else {
         print('[REGEN] Company logo file not found.');
       }
     }
 
+    // Calculate total price and handle null quantities
     double totalPrice = 0;
-    print('[REGEN] Calculating total price...');
     selectedItems.forEach((item, quantity) {
-      final safeQty = quantity ?? 1;
+      final safeQty = quantity ?? 1; // Handle null quantities
+      if (quantity == null) {
+        print(
+            '[REGEN] Warning: Null quantity found for item ${item.name}, defaulting to 1');
+      }
+      print(
+          '[REGEN] Item: ${item.name}, Quantity: $safeQty, Price: ${item.price}');
       totalPrice += item.price * safeQty;
-      print('[REGEN] Item: ${item.name}, Qty: $safeQty, Price: ${item.price}');
     });
     print('[REGEN] Total price: $totalPrice');
 
-    print('[REGEN] Adding PDF page...');
+    // Create PDF content
     pdf.addPage(
       pw.Page(
         pageFormat: PdfPageFormat.a4,
         build: (pw.Context context) {
+          print('[REGEN] Generating PDF content...');
           return pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
@@ -82,11 +96,11 @@ Future<void> regen(
                   style: pw.TextStyle(
                       fontSize: 24, fontWeight: pw.FontWeight.bold)),
               pw.SizedBox(height: 10),
-              pw.Text('From: ${userData?['name'] ?? 'Company Name'}'),
-              pw.Text('Email: ${userData?['email'] ?? ''}'),
-              pw.Text('Phone: ${userData?['phone'] ?? ''}'),
-              pw.Text('Address: ${userData?['address'] ?? ''}'),
-              pw.Text('Website: ${userData?['website'] ?? ''}'),
+              pw.Text('From: ${userData['name'] ?? 'Company Name'}'),
+              pw.Text('Email: ${userData['email'] ?? ''}'),
+              pw.Text('Phone: ${userData['phone'] ?? ''}'),
+              pw.Text('Address: ${userData['address'] ?? ''}'),
+              pw.Text('Website: ${userData['website'] ?? ''}'),
               if (companyLogo != null)
                 pw.Padding(
                   padding: const pw.EdgeInsets.only(top: 10),
@@ -110,62 +124,30 @@ Future<void> regen(
                   2: const pw.FlexColumnWidth(1),
                   3: const pw.FlexColumnWidth(2),
                 },
-                children: [
-                  pw.TableRow(
-                    decoration: pw.BoxDecoration(color: PdfColors.grey300),
+                children: selectedItems.entries.map((entry) {
+                  final item = entry.key;
+                  final qty = entry.value ?? 1;
+                  return pw.TableRow(
                     children: [
                       pw.Padding(
                         padding: const pw.EdgeInsets.all(8),
-                        child: pw.Text('Item Name',
-                            style:
-                                pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                        child: pw.Text(item.name),
                       ),
                       pw.Padding(
                         padding: const pw.EdgeInsets.all(8),
-                        child: pw.Text('Type',
-                            style:
-                                pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                        child: pw.Text(item.type),
                       ),
                       pw.Padding(
                         padding: const pw.EdgeInsets.all(8),
-                        child: pw.Text('Qty',
-                            style:
-                                pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                        child: pw.Text('$qty'),
                       ),
                       pw.Padding(
                         padding: const pw.EdgeInsets.all(8),
-                        child: pw.Text('Price (Rs)',
-                            style:
-                                pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                        child: pw.Text('Rs. ${item.price.toStringAsFixed(2)}'),
                       ),
                     ],
-                  ),
-                  ...selectedItems.entries.map((entry) {
-                    final item = entry.key;
-                    final qty = entry.value ?? 1;
-                    return pw.TableRow(
-                      children: [
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text(item.name),
-                        ),
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text(item.type),
-                        ),
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text('$qty'),
-                        ),
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child:
-                              pw.Text('Rs. ${item.price.toStringAsFixed(2)}'),
-                        ),
-                      ],
-                    );
-                  }).toList(),
-                ],
+                  );
+                }).toList(),
               ),
               pw.SizedBox(height: 10),
               pw.Row(
@@ -176,52 +158,39 @@ Future<void> regen(
                           fontSize: 16, fontWeight: pw.FontWeight.bold)),
                 ],
               ),
-              pw.SizedBox(height: 30),
-              pw.Text('Thank you for your business!',
-                  style: pw.TextStyle(
-                      fontSize: 16, fontWeight: pw.FontWeight.bold)),
             ],
           );
         },
       ),
     );
-    print('[REGEN] PDF page added successfully.');
 
     final output = await getTemporaryDirectory();
+    print('[REGEN] Temporary directory: ${output.path}');
     final filePath = '${output.path}/invoicenew_$invoiceNumber.pdf';
-    final file = File(filePath);
     print('[REGEN] Saving PDF to: $filePath');
-
+    final file = File(filePath);
     await file.writeAsBytes(await pdf.save());
-    print('[REGEN] PDF saved successfully.');
 
-    if (context.mounted && Navigator.canPop(context)) {
-      Navigator.pop(context);
-      print('[REGEN] Closed loading dialog.');
+    if (context.mounted) {
+      Navigator.pop(context); // Close loading dialog
     }
 
-    if (!context.mounted) {
-      print('[REGEN] Context no longer mounted. Exiting before preview.');
-      return;
+    // Check if context is mounted before pushing a new route
+    if (context.mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => PdfPreviewPage(filePath: file.path)),
+      );
     }
 
-    print('[REGEN] Opening PDF preview...');
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => PdfPreviewPage(filePath: file.path)),
-    );
-
-    print('[REGEN] Sharing PDF...');
+    // Share the PDF
     await Share.shareXFiles([XFile(file.path)], text: 'Here is your invoice!');
-    print('[REGEN] PDF shared successfully.');
   } catch (e, stackTrace) {
     print('[REGEN] ERROR during PDF generation: $e');
     print('[REGEN] STACKTRACE:\n$stackTrace');
-
     if (context.mounted && Navigator.canPop(context)) {
       Navigator.pop(context);
     }
-
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error generating PDF: $e')),
