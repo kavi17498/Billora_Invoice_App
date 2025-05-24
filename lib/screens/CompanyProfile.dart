@@ -44,59 +44,62 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      child: SingleChildScrollView(
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 20),
-                Text(
-                  'Complete\nYour Profile',
-                  style: primaryTextStyle,
-                ),
-                const SizedBox(height: 30),
-                CustomTextField(
-                    hintText: "Address Line 1 ....",
-                    controller: address1Controller),
-                const SizedBox(height: 15),
-                CustomTextField(
-                    hintText: "Address Line 2 ....",
-                    controller: address2Controller),
-                const SizedBox(height: 15),
-                CustomTextField(
-                    hintText: "Address Line 3....",
-                    controller: address3Controller),
-                const SizedBox(height: 15),
-                CustomTextField(
-                    hintText: "City ....", controller: cityController),
-                const SizedBox(height: 15),
-                CustomTextField(
-                    hintText: "Email ....", controller: EmailController),
-                const SizedBox(height: 15),
-                CustomTextField(
-                  hintText: "Telephone No ....",
-                  keyboardType: TextInputType.phone,
-                  controller: phoneController,
-                ),
-                const SizedBox(height: 10),
-                CustomTextField(
-                    hintText: "Website ....", controller: websiteController),
-                const SizedBox(height: 20),
-                Buttoncomponent(
-                  text: "Continue",
-                  onPressed: _saveProfile,
-                  color: primaryColor,
-                  textStyle: buttonTextStyle,
-                ),
-                SkipButton(onTap: () {
-                  Navigator.pushNamed(context, "/dashboard");
-                }),
-              ],
-            ),
+    return Scaffold(
+      resizeToAvoidBottomInset:
+          true, // This is true by default, but it's good to be explicit
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 30),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              Text(
+                'Complete\nYour Profile',
+                style: primaryTextStyle,
+              ),
+              const SizedBox(height: 30),
+              CustomTextField(
+                  hintText: "Address Line 1 ....",
+                  controller: address1Controller),
+              const SizedBox(height: 15),
+              CustomTextField(
+                  hintText: "Address Line 2 ....",
+                  controller: address2Controller),
+              const SizedBox(height: 15),
+              CustomTextField(
+                  hintText: "Address Line 3....",
+                  controller: address3Controller),
+              const SizedBox(height: 15),
+              CustomTextField(
+                  hintText: "City ....", controller: cityController),
+              const SizedBox(height: 15),
+              CustomTextField(
+                  hintText: "Email ....", controller: EmailController),
+              const SizedBox(height: 15),
+              CustomTextField(
+                hintText: "Telephone No ....",
+                keyboardType: TextInputType.phone,
+                controller: phoneController,
+              ),
+              const SizedBox(height: 10),
+              CustomTextField(
+                  hintText: "Website ....", controller: websiteController),
+              const SizedBox(height: 20),
+              Buttoncomponent(
+                text: "Continue",
+                onPressed: _saveProfile,
+                color: primaryColor,
+                textStyle: buttonTextStyle,
+              ),
+              SkipButton(onTap: () {
+                Navigator.pushNamed(context, "/dashboard");
+              }),
+              const SizedBox(
+                  height:
+                      30), // extra space at bottom to avoid last field being hidden
+            ],
           ),
         ),
       ),
