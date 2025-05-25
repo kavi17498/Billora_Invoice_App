@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:invoiceapp/constrains/Colors.dart';
 import 'package:invoiceapp/services/item_service.dart';
 
 class CreateItemPage extends StatefulWidget {
@@ -59,21 +60,67 @@ class _CreateItemPageState extends State<CreateItemPage> {
           child: ListView(
             children: [
               TextFormField(
-                decoration: const InputDecoration(labelText: "Name"),
+                decoration: InputDecoration(
+                  labelText: "Name",
+                  labelStyle: TextStyle(
+                      color: primaryColor), // Set the label text color to green
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                        color:
+                            primaryColor), // Set the line color when the field is not focused
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                        color:
+                            primaryColor), // Set the line color when the field is focused
+                  ),
+                ),
+                style: TextStyle(
+                    color: secondaryColor), // Set the input text color to green
                 onSaved: (val) => _name = val ?? '',
                 validator: (val) => val!.isEmpty ? 'Required' : null,
               ),
               TextFormField(
-                decoration: const InputDecoration(labelText: "Description"),
+                decoration: InputDecoration(
+                  labelText: "Description",
+                  labelStyle: TextStyle(color: primaryColor),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: primaryColor),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: primaryColor),
+                  ),
+                ),
+                style: TextStyle(color: secondaryColor),
                 onSaved: (val) => _description = val ?? '',
               ),
               TextFormField(
-                decoration: const InputDecoration(labelText: "Price"),
+                decoration: InputDecoration(
+                  labelText: "Price",
+                  labelStyle: TextStyle(color: primaryColor),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: primaryColor),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: primaryColor),
+                  ),
+                ),
+                style: TextStyle(color: secondaryColor),
                 keyboardType: TextInputType.number,
                 onSaved: (val) => _price = double.tryParse(val!) ?? 0,
               ),
               TextFormField(
-                decoration: const InputDecoration(labelText: "Cost"),
+                decoration: InputDecoration(
+                  labelText: "Cost",
+                  labelStyle: TextStyle(color: primaryColor),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: primaryColor),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: primaryColor),
+                  ),
+                ),
+                style: TextStyle(color: primaryColor),
                 keyboardType: TextInputType.number,
                 onSaved: (val) => _cost = double.tryParse(val!) ?? 0,
               ),
@@ -84,20 +131,49 @@ class _CreateItemPageState extends State<CreateItemPage> {
                   DropdownMenuItem(value: 'good', child: Text('Good')),
                 ],
                 onChanged: (val) => setState(() => _type = val!),
-                decoration: const InputDecoration(labelText: "Type"),
+                decoration: InputDecoration(
+                  labelText: "Type",
+                  labelStyle: TextStyle(color: primaryColor),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: primaryColor),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: primaryColor),
+                  ),
+                ),
               ),
               if (_type == 'good')
                 TextFormField(
-                  decoration: const InputDecoration(labelText: "Quantity"),
+                  decoration: InputDecoration(
+                    labelText: "Quantity",
+                    labelStyle: TextStyle(color: secondaryColor),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: secondaryColor),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: secondaryColor),
+                    ),
+                  ),
+                  style: TextStyle(color: secondaryColor),
                   keyboardType: TextInputType.number,
                   onSaved: (val) => _quantity = int.tryParse(val!),
                 ),
               const SizedBox(height: 10),
               ElevatedButton.icon(
-                style: ButtonStyle(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: secondaryColor,
+                  textStyle: TextStyle(color: backgroundColor),
+                ),
                 onPressed: _pickImage,
-                icon: const Icon(Icons.image),
-                label: const Text("Pick Image"),
+                icon: Icon(
+                  Icons.image,
+                  color: backgroundColor, // Set the icon color to white
+                ),
+                label: Text(
+                  "Pick Image",
+                  style: TextStyle(
+                      color: backgroundColor), // Ensure the text color is white
+                ),
               ),
               if (_imagePath != null)
                 Padding(
@@ -105,8 +181,15 @@ class _CreateItemPageState extends State<CreateItemPage> {
                   child: Image.file(File(_imagePath!), height: 100),
                 ),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor:
+                      primaryColor, // Set the background color to primaryColor
+                  textStyle: TextStyle(
+                      color: backgroundColor), // Set the text color to white
+                ),
                 onPressed: _saveItem,
-                child: const Text("Save Item"),
+                child:
+                    Text("Save Item", style: TextStyle(color: backgroundColor)),
               ),
             ],
           ),
