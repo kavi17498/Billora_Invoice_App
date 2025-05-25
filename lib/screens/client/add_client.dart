@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:invoiceapp/constrains/Colors.dart';
 import 'package:invoiceapp/services/client_service.dart';
 
 class AddClientScreen extends StatefulWidget {
@@ -62,16 +63,23 @@ class _AddClientScreenState extends State<AddClientScreen> {
           child: ListView(
             children: [
               _buildTextField(_nameController, 'Name', isRequired: true),
-              _buildTextField(_emailController, 'Email',
-                  keyboardType: TextInputType.emailAddress),
-              _buildTextField(_phoneController, 'Phone',
-                  keyboardType: TextInputType.phone),
+              _buildEmailField(),
+              _buildPhoneField(),
               _buildTextField(_addressController, 'Address'),
               _buildTextField(_noteController, 'Note', maxLines: 3),
               const SizedBox(height: 20),
               ElevatedButton.icon(
-                icon: const Icon(Icons.save),
-                label: const Text('Save Client'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor:
+                      primaryColor, // Set button background to blue
+                  textStyle: TextStyle(color: Colors.white), // Text color white
+                ),
+                icon: const Icon(Icons.save,
+                    color: Colors.white), // Icon color white
+                label: Text(
+                  'Save Client',
+                  style: TextStyle(color: backgroundColor),
+                ),
                 onPressed: _saveClient,
               ),
             ],
@@ -96,11 +104,76 @@ class _AddClientScreenState extends State<AddClientScreen> {
         maxLines: maxLines,
         decoration: InputDecoration(
           labelText: label,
-          border: const OutlineInputBorder(),
+          labelStyle: TextStyle(color: secondaryColor), // Label text color blue
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: secondaryColor), // Border color blue
+          ),
         ),
+        style: TextStyle(color: secondaryColor), // Input text color blue
         validator: (value) {
           if (isRequired && (value == null || value.trim().isEmpty)) {
             return '$label is required';
+          }
+          return null;
+        },
+      ),
+    );
+  }
+
+  // Email validation using regex
+  Widget _buildEmailField() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: TextFormField(
+        controller: _emailController,
+        keyboardType: TextInputType.emailAddress,
+        decoration: InputDecoration(
+          labelText: 'Email',
+          labelStyle: TextStyle(color: secondaryColor),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: secondaryColor),
+          ),
+        ),
+        style: TextStyle(color: secondaryColor),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Email is required';
+          }
+          // Regex pattern for email validation
+          final emailRegex =
+              RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+          if (!emailRegex.hasMatch(value)) {
+            return 'Enter a valid email address';
+          }
+          return null;
+        },
+      ),
+    );
+  }
+
+  // Phone number validation: ensure numeric input
+  Widget _buildPhoneField() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: TextFormField(
+        controller: _phoneController,
+        keyboardType: TextInputType.phone,
+        decoration: InputDecoration(
+          labelText: 'Phone',
+          labelStyle: TextStyle(color: secondaryColor),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: secondaryColor),
+          ),
+        ),
+        style: TextStyle(color: secondaryColor),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Phone number is required';
+          }
+          // Ensure the phone number only contains digits
+          final phoneRegex = RegExp(r'^\d+$');
+          if (!phoneRegex.hasMatch(value)) {
+            return 'Enter a valid phone number';
           }
           return null;
         },
