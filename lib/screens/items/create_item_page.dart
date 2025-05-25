@@ -63,16 +63,17 @@ class _CreateItemPageState extends State<CreateItemPage> {
                 decoration: InputDecoration(
                   labelText: "Name",
                   labelStyle: TextStyle(
-                      color: primaryColor), // Set the label text color to green
+                      color:
+                          secondaryColor), // Set the label text color to green
                   enabledBorder: UnderlineInputBorder(
                     borderSide: BorderSide(
                         color:
-                            primaryColor), // Set the line color when the field is not focused
+                            secondaryColor), // Set the line color when the field is not focused
                   ),
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(
                         color:
-                            primaryColor), // Set the line color when the field is focused
+                            secondaryColor), // Set the line color when the field is focused
                   ),
                 ),
                 style: TextStyle(
@@ -83,12 +84,12 @@ class _CreateItemPageState extends State<CreateItemPage> {
               TextFormField(
                 decoration: InputDecoration(
                   labelText: "Description",
-                  labelStyle: TextStyle(color: primaryColor),
+                  labelStyle: TextStyle(color: secondaryColor),
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: primaryColor),
+                    borderSide: BorderSide(color: secondaryColor),
                   ),
                   focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: primaryColor),
+                    borderSide: BorderSide(color: secondaryColor),
                   ),
                 ),
                 style: TextStyle(color: secondaryColor),
@@ -97,12 +98,12 @@ class _CreateItemPageState extends State<CreateItemPage> {
               TextFormField(
                 decoration: InputDecoration(
                   labelText: "Price",
-                  labelStyle: TextStyle(color: primaryColor),
+                  labelStyle: TextStyle(color: secondaryColor),
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: primaryColor),
+                    borderSide: BorderSide(color: secondaryColor),
                   ),
                   focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: primaryColor),
+                    borderSide: BorderSide(color: secondaryColor),
                   ),
                 ),
                 style: TextStyle(color: secondaryColor),
@@ -112,15 +113,15 @@ class _CreateItemPageState extends State<CreateItemPage> {
               TextFormField(
                 decoration: InputDecoration(
                   labelText: "Cost",
-                  labelStyle: TextStyle(color: primaryColor),
+                  labelStyle: TextStyle(color: secondaryColor),
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: primaryColor),
+                    borderSide: BorderSide(color: secondaryColor),
                   ),
                   focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: primaryColor),
+                    borderSide: BorderSide(color: secondaryColor),
                   ),
                 ),
-                style: TextStyle(color: primaryColor),
+                style: TextStyle(color: secondaryColor),
                 keyboardType: TextInputType.number,
                 onSaved: (val) => _cost = double.tryParse(val!) ?? 0,
               ),
@@ -133,12 +134,12 @@ class _CreateItemPageState extends State<CreateItemPage> {
                 onChanged: (val) => setState(() => _type = val!),
                 decoration: InputDecoration(
                   labelText: "Type",
-                  labelStyle: TextStyle(color: primaryColor),
+                  labelStyle: TextStyle(color: secondaryColor),
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: primaryColor),
+                    borderSide: BorderSide(color: secondaryColor),
                   ),
                   focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: primaryColor),
+                    borderSide: BorderSide(color: secondaryColor),
                   ),
                 ),
               ),
