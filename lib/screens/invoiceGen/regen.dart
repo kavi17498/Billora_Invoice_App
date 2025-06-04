@@ -18,14 +18,14 @@ class RegenPage extends StatefulWidget {
   final Map<Item, int?> selectedItems;
 
   const RegenPage({
-    Key? key,
+    super.key,
     required this.invoiceNumber,
     required this.billTo,
     required this.buyerAddress,
     required this.buyerEmail,
     required this.buyerPhone,
     required this.selectedItems,
-  }) : super(key: key);
+  });
 
   @override
   _RegenPageState createState() => _RegenPageState();

@@ -145,7 +145,7 @@ Future<void> generateAndSharePdf(
                         ),
                       ],
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
               pw.SizedBox(height: 10),

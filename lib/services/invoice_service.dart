@@ -116,9 +116,8 @@ class InvoiceService {
           id: id as int,
           name: name as String,
           description: description as String? ?? '',
-          price: price is int ? (price as int).toDouble() : price as double,
-          cost:
-              cost is int ? (cost as int).toDouble() : (cost as double?) ?? 0.0,
+          price: price is int ? (price).toDouble() : price as double,
+          cost: cost is int ? (cost).toDouble() : (cost as double?) ?? 0.0,
           imagePath: imagePath as String? ?? '',
           type: type as String,
           // Handle quantity field for the Item object separately from the invoice quantity

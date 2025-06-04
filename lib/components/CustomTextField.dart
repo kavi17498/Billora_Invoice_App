@@ -6,11 +6,11 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController? controller;
 
   const CustomTextField({
-    Key? key,
+    super.key,
     required this.hintText,
     this.keyboardType = TextInputType.text,
     this.controller,
-  }) : super(key: key);
+  });
 
   InputDecoration _inputDecoration() {
     return InputDecoration(

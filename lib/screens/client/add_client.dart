@@ -3,7 +3,7 @@ import 'package:invoiceapp/constrains/Colors.dart';
 import 'package:invoiceapp/services/client_service.dart';
 
 class AddClientScreen extends StatefulWidget {
-  const AddClientScreen({Key? key}) : super(key: key);
+  const AddClientScreen({super.key});
 
   @override
   State<AddClientScreen> createState() => _AddClientScreenState();

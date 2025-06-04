@@ -5,7 +5,7 @@ import 'package:invoiceapp/services/client_service.dart';
 import 'dart:math';
 
 Future<void> showInvoiceDialog(BuildContext parentContext) async {
-  final _formKey = GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
 
   String invoiceNumber = 'INV-${Random().nextInt(100000)}'; // Auto-generated
   int? selectedClientId;
@@ -26,7 +26,7 @@ Future<void> showInvoiceDialog(BuildContext parentContext) async {
           return AlertDialog(
             title: const Text('Create Invoice'),
             content: Form(
-              key: _formKey,
+              key: formKey,
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -120,7 +120,7 @@ Future<void> showInvoiceDialog(BuildContext parentContext) async {
                             ),
                         ],
                       );
-                    }).toList(),
+                    }),
                   ],
                 ),
               ),
@@ -132,8 +132,8 @@ Future<void> showInvoiceDialog(BuildContext parentContext) async {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
+                  if (formKey.currentState!.validate()) {
+                    formKey.currentState!.save();
 
                     for (var entry in selectedItemsWithQuantity.entries) {
                       final item = entry.key;

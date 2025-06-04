@@ -4,8 +4,7 @@ import 'package:invoiceapp/services/client_service.dart';
 class ClientDetailsScreen extends StatefulWidget {
   final int clientId;
 
-  const ClientDetailsScreen({Key? key, required this.clientId})
-      : super(key: key);
+  const ClientDetailsScreen({super.key, required this.clientId});
 
   @override
   State<ClientDetailsScreen> createState() => _ClientDetailsScreenState();

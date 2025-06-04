@@ -5,7 +5,7 @@ import 'package:invoiceapp/services/invoice_service.dart';
 import 'package:invoiceapp/services/item_service.dart';
 
 class InvoiceListPage extends StatefulWidget {
-  const InvoiceListPage({Key? key}) : super(key: key);
+  const InvoiceListPage({super.key});
 
   @override
   State<InvoiceListPage> createState() => _InvoiceListPageState();

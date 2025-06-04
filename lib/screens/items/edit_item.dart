@@ -5,7 +5,7 @@ import 'package:invoiceapp/services/item_service.dart';
 
 class EditItemPage extends StatefulWidget {
   final int itemId;
-  const EditItemPage({Key? key, required this.itemId}) : super(key: key);
+  const EditItemPage({super.key, required this.itemId});
 
   @override
   State<EditItemPage> createState() => _EditItemPageState();

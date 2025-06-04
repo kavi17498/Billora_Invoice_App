@@ -3,7 +3,7 @@ import 'package:invoiceapp/services/database_service.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class FinancialAnalysisPage extends StatefulWidget {
-  const FinancialAnalysisPage({Key? key}) : super(key: key);
+  const FinancialAnalysisPage({super.key});
 
   @override
   State<FinancialAnalysisPage> createState() => _FinancialAnalysisPageState();

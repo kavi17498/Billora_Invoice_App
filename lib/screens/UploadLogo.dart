@@ -10,7 +10,7 @@ import 'package:invoiceapp/constrains/Colors.dart';
 import 'package:invoiceapp/constrains/TextStyles.dart';
 
 class UploadLogoScreen extends StatefulWidget {
-  const UploadLogoScreen({Key? key}) : super(key: key);
+  const UploadLogoScreen({super.key});
 
   @override
   State<UploadLogoScreen> createState() => _UploadLogoScreenState();

@@ -4,7 +4,7 @@ import 'package:invoiceapp/screens/items/edit_item.dart';
 import 'package:invoiceapp/services/item_service.dart';
 
 class ItemListPage extends StatefulWidget {
-  const ItemListPage({Key? key}) : super(key: key);
+  const ItemListPage({super.key});
 
   @override
   State<ItemListPage> createState() => _ItemListPageState();

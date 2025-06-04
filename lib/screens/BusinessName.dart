@@ -13,7 +13,7 @@ class Businessname extends StatefulWidget {
 }
 
 class _BusinessnameState extends State<Businessname> {
-  String? _businessName = null;
+  String? _businessName;
 
   final DatabaseService _databaseService = DatabaseService.instance;
 

@@ -3,7 +3,7 @@ import 'package:invoiceapp/screens/client/client_details.dart';
 import 'package:invoiceapp/services/client_service.dart';
 
 class ClientListScreen extends StatefulWidget {
-  const ClientListScreen({Key? key}) : super(key: key);
+  const ClientListScreen({super.key});
 
   @override
   State<ClientListScreen> createState() => _ClientListScreenState();

@@ -7,7 +7,7 @@ import 'package:invoiceapp/constrains/TextStyles.dart';
 import 'package:invoiceapp/services/database_service.dart';
 
 class CompleteProfileScreen extends StatefulWidget {
-  const CompleteProfileScreen({Key? key}) : super(key: key);
+  const CompleteProfileScreen({super.key});
 
   @override
   State<CompleteProfileScreen> createState() => _CompleteProfileScreenState();

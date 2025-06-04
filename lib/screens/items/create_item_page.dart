@@ -5,7 +5,7 @@ import 'package:invoiceapp/constrains/Colors.dart';
 import 'package:invoiceapp/services/item_service.dart';
 
 class CreateItemPage extends StatefulWidget {
-  const CreateItemPage({Key? key}) : super(key: key);
+  const CreateItemPage({super.key});
 
   @override
   State<CreateItemPage> createState() => _CreateItemPageState();
