@@ -35,8 +35,13 @@ Future<void> showInvoiceDialog(BuildContext parentContext) async {
                       initialValue: invoiceNumber,
                       decoration:
                           const InputDecoration(labelText: 'Invoice Number'),
-                      readOnly: true,
                       onSaved: (value) => invoiceNumber = value!,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Invoice number cannot be empty';
+                        }
+                        return null;
+                      },
                     ),
                     DropdownButtonFormField<int>(
                       decoration:
