@@ -166,13 +166,12 @@ class _AddClientScreenState extends State<AddClientScreen> {
         ),
         style: TextStyle(color: secondaryColor),
         validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Phone number is required';
-          }
-          // Ensure the phone number only contains digits
-          final phoneRegex = RegExp(r'^\d+$');
-          if (!phoneRegex.hasMatch(value)) {
-            return 'Enter a valid phone number';
+          if (value != null && value.isNotEmpty) {
+            // Ensure the phone number only contains digits
+            final phoneRegex = RegExp(r'^\d+$');
+            if (!phoneRegex.hasMatch(value)) {
+              return 'Enter a valid phone number';
+            }
           }
           return null;
         },
