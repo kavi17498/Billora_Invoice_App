@@ -13,10 +13,11 @@ class DatabaseService {
   final String _columnEmail = 'email';
   final String _columnPhone = 'phone';
   final String _columnAddress = 'address';
-  final String _columnNote = 'note';
+  final String _columnPaymentInstructions = 'paymentInstructions';
   final String _columnCompanyLogoUrl = 'company_logo_url';
   final String _columnWebsite = 'website';
   final String _columnState = 'state';
+  final String _columnNote = 'note';
 
   static Database? _database;
 
@@ -42,6 +43,7 @@ class DatabaseService {
             $_columnPhone TEXT,
             $_columnAddress TEXT,
             $_columnNote TEXT,
+            $_columnPaymentInstructions TEXT,
             $_columnCompanyLogoUrl TEXT,
             $_columnWebsite TEXT,
             $_columnState TEXT
@@ -120,7 +122,8 @@ class DatabaseService {
     String? website,
     String? email,
     String? name, // <-- Add this
-    String? note, // <-- And this
+    String? note, // <-- Keep this
+    String? paymentInstructions, // <-- Add this
   }) async {
     final db = await getdatabase();
     await db.update(
@@ -132,6 +135,9 @@ class DatabaseService {
         if (email != null) _columnEmail: email,
         if (name != null) _columnName: name, // <-- Update name
         if (note != null) _columnNote: note, // <-- Update note
+        if (paymentInstructions != null)
+          _columnPaymentInstructions:
+              paymentInstructions, // <-- Update paymentInstructions
       },
       where: '$_columnId = ?',
       whereArgs: [userId],
