@@ -35,7 +35,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
         email: EmailController.text,
       );
 
-      Navigator.pushNamed(context, "/dashboard");
+      Navigator.pushNamed(context, "/paymentinstructions");
     } catch (e) {
       print("Failed to update profile: $e");
       // You could show a snackbar or alert here for the user
@@ -94,7 +94,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                 textStyle: buttonTextStyle,
               ),
               SkipButton(onTap: () {
-                Navigator.pushNamed(context, "/dashboard");
+                Navigator.pushNamed(context, "/paymentinstructions");
               }),
               const SizedBox(
                   height:
