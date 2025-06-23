@@ -63,7 +63,7 @@ class _RegenPageState extends State<RegenPage> {
       final companyLogoUrl = userData['company_logo_url'];
       print('[REGEN] Company logo path: $companyLogoUrl');
 
-      if (companyLogoUrl.isNotEmpty) {
+      if (companyLogoUrl != null && companyLogoUrl.isNotEmpty) {
         final file = File(companyLogoUrl);
         print('[REGEN] File exists: ${await file.exists()}');
         if (await file.exists()) {

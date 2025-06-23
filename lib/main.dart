@@ -3,7 +3,6 @@ import "package:google_fonts/google_fonts.dart";
 import "package:invoiceapp/Wrapper.dart";
 import "package:invoiceapp/screens/BusinessName.dart";
 import "package:invoiceapp/screens/CompanyProfile.dart";
-import "package:invoiceapp/screens/PaymentInstructions.dart";
 import "package:invoiceapp/screens/SignInpage.dart";
 import "package:invoiceapp/screens/Unnecssary/Comingsoon.dart";
 import "package:invoiceapp/screens/UploadLogo.dart";
@@ -43,7 +42,6 @@ class Myapp extends StatelessWidget {
         "/prfile": (context) => const UserDetailsScreen(),
         "/welcome": (context) => const Welcome(),
         "/commingsoon": (context) => const ComingSoon(),
-        "/paymentinstructions": (context) => const Paymentinstructions(),
       },
     );
   }
