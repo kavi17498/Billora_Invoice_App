@@ -168,7 +168,7 @@ class _AddClientScreenState extends State<AddClientScreen> {
         validator: (value) {
           if (value != null && value.isNotEmpty) {
             // Ensure the phone number only contains digits
-            final phoneRegex = RegExp(r'^\d+$');
+            final phoneRegex = RegExp(r'^\d$');
             if (!phoneRegex.hasMatch(value)) {
               return 'Enter a valid phone number';
             }

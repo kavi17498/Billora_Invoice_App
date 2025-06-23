@@ -248,7 +248,9 @@ class _RegenPageState extends State<RegenPage> {
                 ),
 
                 // Footer
-                pw.SizedBox(height: 30),
+                pw.SizedBox(height: 20),
+                pw.Text('Payment Instructions: ${userData?['note'] ?? ''}',
+                    textAlign: pw.TextAlign.right),
                 pw.Divider(),
                 pw.Center(
                   child: pw.Text('Thank you for your business!',
