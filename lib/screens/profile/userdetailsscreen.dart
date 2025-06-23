@@ -24,7 +24,6 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
 
   Future<void> loadUser() async {
     final user = await DatabaseService.instance.getUserById(1);
-    // Check if the widget is still in the widget tree before calling setState
     if (!mounted) return;
     setState(() {
       userData = user;
@@ -42,21 +41,36 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
       website: key == 'website' ? newValue : null,
       email: key == 'email' ? newValue : null,
     );
-    // You might also want to add a mounted check here
     if (!mounted) return;
     await loadUser();
   }
 
   void showEditDialog(String fieldKey, String label, String? currentValue) {
     final controller = TextEditingController(text: currentValue);
+    final isMultiLine = fieldKey == 'note';
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text("Edit $label"),
-        content: TextField(
-          controller: controller,
-          decoration: InputDecoration(labelText: label),
-        ),
+        content: isMultiLine
+            ? SizedBox(
+                height: 150,
+                child: TextField(
+                  controller: controller,
+                  maxLines: null,
+                  minLines: 5,
+                  keyboardType: TextInputType.multiline,
+                  decoration: InputDecoration(
+                    labelText: label,
+                    alignLabelWithHint: true,
+                  ),
+                ),
+              )
+            : TextField(
+                controller: controller,
+                decoration: InputDecoration(labelText: label),
+              ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -87,7 +101,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   Future<void> pickAndSaveImage() async {
     final picker = ImagePicker();
     final picked = await picker.pickImage(source: ImageSource.gallery);
-    if (!mounted) return; // 👈 prevent crash if user navigated back
+    if (!mounted) return;
 
     if (picked != null) {
       final db = await DatabaseService.instance.getdatabase();
@@ -97,7 +111,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
         where: 'id = ?',
         whereArgs: [1],
       );
-      if (!mounted) return; // 👈 double-check before setState/loadUser
+      if (!mounted) return;
       await loadUser();
     }
   }
@@ -117,21 +131,17 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       Center(
                         child: Text("Company Logo", style: heading),
                       ),
-                      SizedBox(
-                        height: 10,
-                      ),
+                      const SizedBox(height: 10),
                       Center(
                         child: Stack(
                           children: [
-                            // Circular profile picture with border
                             Container(
                               width: 150,
                               height: 150,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                border: Border.all(
-                                    color: secondaryColor,
-                                    width: 3), // Border color & thickness
+                                border:
+                                    Border.all(color: secondaryColor, width: 3),
                                 image: userData!['company_logo_url'] == null
                                     ? null
                                     : DecorationImage(
@@ -144,15 +154,13 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                                   ? const Center(child: Text("No image."))
                                   : null,
                             ),
-
-                            // Positioned edit icon on top right corner of the circle
                             Positioned(
                               right: 0,
                               top: 0,
                               child: InkWell(
                                 onTap: pickAndSaveImage,
                                 child: Container(
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                     color: Colors.black54,
                                     shape: BoxShape.circle,
                                   ),
