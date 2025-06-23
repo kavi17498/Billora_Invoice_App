@@ -232,7 +232,9 @@ Future<void> generateAndSharePdf(
                 ],
               ),
 
-              pw.SizedBox(height: 30),
+              pw.SizedBox(height: 20),
+              pw.Text('Payment Instructions: ${userData?['note'] ?? ''}',
+                  textAlign: pw.TextAlign.right),
               pw.Divider(),
 
               // Footer

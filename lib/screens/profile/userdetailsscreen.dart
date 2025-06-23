@@ -177,7 +177,8 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                           fieldKey: "phone"),
                       buildEditableTile("Address", userData!['address'],
                           fieldKey: "address"),
-                      buildEditableTile("Note", userData!['note'],
+                      buildEditableTile(
+                          "Payment Instructions", userData!['note'],
                           fieldKey: "note"),
                       buildEditableTile("Website", userData!['website'],
                           fieldKey: "website"),
