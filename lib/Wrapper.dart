@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:invoiceapp/services/database_service.dart';
+import 'package:invoiceapp/services/onboarding_service.dart';
 
 class Wrapper extends StatefulWidget {
   const Wrapper({super.key});
@@ -18,11 +19,17 @@ class _WrapperState extends State<Wrapper> {
   Future<void> _checkUserAndNavigate() async {
     final dbService = DatabaseService.instance;
     final userExists = await dbService.doesUserExist();
+    final hasSeenOnboarding = await OnboardingService.hasSeenOnboarding();
 
     if (!mounted) return;
 
     if (userExists) {
-      Navigator.pushReplacementNamed(context, "/dashboard");
+      // User exists, check if they've seen the tour
+      if (!hasSeenOnboarding) {
+        Navigator.pushReplacementNamed(context, "/app-tour");
+      } else {
+        Navigator.pushReplacementNamed(context, "/dashboard");
+      }
     } else {
       Navigator.pushReplacementNamed(context, "/welcome");
     }
