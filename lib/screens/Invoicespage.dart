@@ -5,7 +5,6 @@ import 'package:invoiceapp/services/item_service.dart';
 import 'package:invoiceapp/constrains/Colors.dart';
 import 'package:invoiceapp/constrains/TextStyles.dart';
 import 'package:invoiceapp/constrains/Dimensions.dart';
-import 'package:invoiceapp/components/AppAppBar.dart';
 import 'package:invoiceapp/components/AppCard.dart';
 import 'package:invoiceapp/components/AppLoading.dart';
 
@@ -50,24 +49,42 @@ class _InvoiceListPageState extends State<InvoiceListPage> {
 
   // This is where we call RegenPage to handle the PDF generation process.
   Future<void> regenerateInvoice(Map<String, dynamic> invoice) async {
-    // Fetch items and quantities from DB
-    Map<Item, int> selectedItems =
-        await InvoiceService().getItemsForInvoice(invoice['id']);
-
-    // Navigate to RegenPage and pass all required parameters for PDF generation.
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => RegenPage(
-          invoiceNumber: invoice['invoice_number'],
-          billTo: invoice['bill_to'],
-          buyerAddress: invoice['address'],
-          buyerEmail: invoice['email'],
-          buyerPhone: invoice['phone'],
-          selectedItems: selectedItems,
+    try {
+      // Show a brief message indicating that the current template will be used
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Regenerating invoice with current template...'),
+          duration: Duration(seconds: 1),
+          backgroundColor: AppColors.primary,
         ),
-      ),
-    );
+      );
+
+      // Fetch items and quantities from DB
+      Map<Item, int> selectedItems =
+          await InvoiceService().getItemsForInvoice(invoice['id']);
+
+      // Navigate to RegenPage and pass all required parameters for PDF generation.
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => RegenPage(
+            invoiceNumber: invoice['invoice_number'],
+            billTo: invoice['bill_to'],
+            buyerAddress: invoice['address'],
+            buyerEmail: invoice['email'],
+            buyerPhone: invoice['phone'],
+            selectedItems: selectedItems,
+          ),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error regenerating invoice: ${e.toString()}'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    }
   }
 
   @override
@@ -191,6 +208,18 @@ class _InvoiceListPageState extends State<InvoiceListPage> {
                                   invoiceDate,
                                   style: AppTextStyles.bodySmall.copyWith(
                                     color: AppColors.textSecondary,
+                                  ),
+                                ),
+
+                                SizedBox(height: AppSpacing.xs),
+
+                                // Regenerate hint
+                                Text(
+                                  "Tap to regenerate with current template",
+                                  style: AppTextStyles.bodySmall.copyWith(
+                                    color: AppColors.textSecondary
+                                        .withOpacity(0.7),
+                                    fontSize: 10,
                                   ),
                                 ),
                               ],
