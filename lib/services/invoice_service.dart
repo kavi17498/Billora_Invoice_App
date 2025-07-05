@@ -174,4 +174,54 @@ class InvoiceService {
       };
     }).toList();
   }
+
+  Future<bool> deleteInvoice(int invoiceId) async {
+    try {
+      print('InvoiceService.deleteInvoice called with ID: $invoiceId');
+      final db = await DatabaseService.instance.getdatabase();
+
+      // Start a transaction to ensure both deletions succeed or fail together
+      await db.transaction((txn) async {
+        // First, delete all invoice items associated with this invoice
+        final itemsDeleted = await txn.delete(
+          _invoiceItemsTable,
+          where: '$_invoiceid = ?',
+          whereArgs: [invoiceId],
+        );
+        print('Deleted $itemsDeleted invoice items for invoice $invoiceId');
+
+        // Then, delete the invoice itself
+        final invoiceDeleted = await txn.delete(
+          _invoiceTable,
+          where: '$_id = ?',
+          whereArgs: [invoiceId],
+        );
+        print('Deleted $invoiceDeleted invoice records for invoice $invoiceId');
+      });
+
+      print('Invoice $invoiceId deleted successfully');
+      return true;
+    } catch (e) {
+      print('Error deleting invoice: $e');
+      return false;
+    }
+  }
+
+  Future<bool> updateInvoiceNumber(int invoiceId, String newInvoiceNumber) async {
+    try {
+      final db = await DatabaseService.instance.getdatabase();
+
+      final result = await db.update(
+        _invoiceTable,
+        {_invoiceNumber: newInvoiceNumber},
+        where: '$_id = ?',
+        whereArgs: [invoiceId],
+      );
+
+      return result > 0;
+    } catch (e) {
+      print('Error updating invoice number: $e');
+      return false;
+    }
+  }
 }
