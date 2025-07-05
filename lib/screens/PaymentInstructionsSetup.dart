@@ -177,6 +177,9 @@ class _PaymentInstructionsSetupState extends State<PaymentInstructionsSetup> {
                                     'Enter your payment details here...\n\nExample:\nBank: ABC Bank\nAccount: 1234567890\nIFSC: ABCD0123456\n\nOr\n\nPayPal: your.email@domain.com\nUPI: yourname@paytm',
                                 prefixIcon: Icons.payment_rounded,
                                 maxLines: 8,
+                                minLines: 4,
+                                keyboardType: TextInputType.multiline,
+                                textInputAction: TextInputAction.newline,
                                 validator: (value) {
                                   // Optional field, so no validation required
                                   return null;
