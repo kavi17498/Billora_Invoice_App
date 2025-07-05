@@ -123,11 +123,11 @@ class InvoiceService {
           // Use default quantity of 1 for item definition
           quantity: 1,
           // Add the missing fields
-          discountPercentage: row['discount_percentage'] is int 
-              ? (row['discount_percentage'] as int).toDouble() 
+          discountPercentage: row['discount_percentage'] is int
+              ? (row['discount_percentage'] as int).toDouble()
               : (row['discount_percentage'] as double?) ?? 0.0,
-          discountAmount: row['discount_amount'] is int 
-              ? (row['discount_amount'] as int).toDouble() 
+          discountAmount: row['discount_amount'] is int
+              ? (row['discount_amount'] as int).toDouble()
               : (row['discount_amount'] as double?) ?? 0.0,
           includeImageInPdf: (row['include_image_in_pdf'] as int?) == 1,
         );
