@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:invoiceapp/Wrapper.dart";
 import "package:invoiceapp/screens/BusinessName.dart";
 import "package:invoiceapp/screens/CompanyProfile.dart";
+import "package:invoiceapp/screens/PaymentInstructionsSetup.dart";
 import "package:invoiceapp/screens/SignInpage.dart";
 import "package:invoiceapp/screens/Unnecssary/Comingsoon.dart";
 import "package:invoiceapp/screens/UploadLogo.dart";
@@ -145,6 +146,7 @@ class Myapp extends StatelessWidget {
         "/businessName": (context) => const Businessname(),
         "/uploadlogo": (context) => const UploadLogoScreen(),
         "/companyinfo": (context) => const CompleteProfileScreen(),
+        "/paymentinstructions": (context) => const PaymentInstructionsSetup(),
         "/dashboard": (context) => const UserDashboard(),
         "/clients": (context) => const ClientListScreen(),
         "/addclient": (context) => const AddClientScreen(),
