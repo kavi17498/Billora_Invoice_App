@@ -33,7 +33,8 @@ class DatabaseService {
 
     _database = await openDatabase(
       databasepath,
-      version: 5, // Incremented version to trigger discount fields migration
+      version:
+          6, // Incremented version to trigger include_image_in_pdf migration
       onCreate: (db, version) async {
         print("Creating user table...");
         await db.execute('''
@@ -93,6 +94,16 @@ class DatabaseService {
             print("Added discount_amount column to item table.");
           } catch (e) {
             print("discount_amount column may already exist: $e");
+          }
+        }
+        if (oldVersion < 6) {
+          // Add include_image_in_pdf column to item table
+          try {
+            await db.execute(
+                'ALTER TABLE item ADD COLUMN include_image_in_pdf INTEGER DEFAULT 0');
+            print("Added include_image_in_pdf column to item table.");
+          } catch (e) {
+            print("include_image_in_pdf column may already exist: $e");
           }
         }
       },

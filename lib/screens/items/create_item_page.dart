@@ -35,6 +35,7 @@ class _CreateItemPageState extends State<CreateItemPage> {
       TextEditingController();
 
   String? _imagePath;
+  bool _includeImageInPdf = false;
 
   @override
   void dispose() {
@@ -71,6 +72,7 @@ class _CreateItemPageState extends State<CreateItemPage> {
   void _removeImage() {
     setState(() {
       _imagePath = null;
+      _includeImageInPdf = false; // Reset the PDF option when image is removed
     });
   }
 
@@ -94,6 +96,7 @@ class _CreateItemPageState extends State<CreateItemPage> {
         discountPercentage:
             double.tryParse(_discountPercentageController.text) ?? 0.0,
         discountAmount: double.tryParse(_discountAmountController.text) ?? 0.0,
+        includeImageInPdf: _includeImageInPdf,
       );
 
       await ItemService.insertItem(item);
@@ -510,6 +513,62 @@ class _CreateItemPageState extends State<CreateItemPage> {
                                   ],
                                 ),
                               ),
+
+                              // Option to include image in PDF (only show if image is selected)
+                              if (_imagePath != null) ...[
+                                SizedBox(height: AppSpacing.md),
+                                Container(
+                                  padding: EdgeInsets.all(AppSpacing.md),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.surface,
+                                    border: Border.all(color: AppColors.border),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.picture_as_pdf_outlined,
+                                        color: AppColors.primary,
+                                        size: 20,
+                                      ),
+                                      SizedBox(width: AppSpacing.sm),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Include image in PDF invoices',
+                                              style: AppTextStyles.bodyMedium
+                                                  .copyWith(
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            SizedBox(height: AppSpacing.xs),
+                                            Text(
+                                              'Show this item\'s image in generated invoices (small size)',
+                                              style: AppTextStyles.bodySmall
+                                                  .copyWith(
+                                                color: AppColors.textSecondary,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Switch(
+                                        value: _includeImageInPdf,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _includeImageInPdf = value;
+                                          });
+                                        },
+                                        activeColor: AppColors.primary,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+
                               SizedBox(height: AppSpacing.xl * 2),
                             ],
                           ),

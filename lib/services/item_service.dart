@@ -14,6 +14,7 @@ class Item {
   int quantity; // Default quantity, always required
   double discountPercentage; // Discount percentage (0-100)
   double discountAmount; // Fixed discount amount
+  bool includeImageInPdf; // Whether to include image in PDF generation
 
   Item({
     this.id,
@@ -26,6 +27,7 @@ class Item {
     this.quantity = 1, // Default quantity is 1
     this.discountPercentage = 0.0, // Default no discount
     this.discountAmount = 0.0, // Default no discount
+    this.includeImageInPdf = false, // Default to not include image in PDF
   });
 
   // Calculate final price after discount
@@ -74,6 +76,7 @@ class Item {
       'quantity': quantity,
       'discount_percentage': discountPercentage,
       'discount_amount': discountAmount,
+      'include_image_in_pdf': includeImageInPdf ? 1 : 0,
     };
   }
 
@@ -89,6 +92,7 @@ class Item {
       quantity: map['quantity'] ?? 1,
       discountPercentage: (map['discount_percentage'] ?? 0.0).toDouble(),
       discountAmount: (map['discount_amount'] ?? 0.0).toDouble(),
+      includeImageInPdf: (map['include_image_in_pdf'] ?? 0) == 1,
     );
   }
 }
@@ -110,10 +114,31 @@ class ItemService {
         type TEXT,
         quantity INTEGER,
         discount_percentage REAL DEFAULT 0.0,
-        discount_amount REAL DEFAULT 0.0
+        discount_amount REAL DEFAULT 0.0,
+        include_image_in_pdf INTEGER DEFAULT 0
       )
     ''');
     print("Item table created.");
+  }
+
+  // Migration method to add include_image_in_pdf column to existing tables
+  static Future<void> migrateItemTable(Database db) async {
+    try {
+      // Check if the column already exists
+      final result = await db.rawQuery("PRAGMA table_info($_itemTable)");
+      bool columnExists =
+          result.any((column) => column['name'] == 'include_image_in_pdf');
+
+      if (!columnExists) {
+        print("Adding include_image_in_pdf column to item table...");
+        await db.execute('''
+          ALTER TABLE $_itemTable ADD COLUMN include_image_in_pdf INTEGER DEFAULT 0
+        ''');
+        print("include_image_in_pdf column added to item table.");
+      }
+    } catch (e) {
+      print("Error migrating item table: $e");
+    }
   }
 
   // Insert item

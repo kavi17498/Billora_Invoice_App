@@ -52,6 +52,27 @@ Future<void> generateAndSharePdf(
       }
     }
 
+    // Load item images for items that should include images in PDF
+    Map<Item, pw.MemoryImage?> itemImages = {};
+    for (Item item in selectedItems.keys) {
+      if (item.includeImageInPdf && item.imagePath.isNotEmpty) {
+        try {
+          final file = File(item.imagePath);
+          if (await file.exists()) {
+            final imageBytes = await file.readAsBytes();
+            itemImages[item] = pw.MemoryImage(imageBytes);
+          } else {
+            itemImages[item] = null;
+          }
+        } catch (e) {
+          print('Error loading item image for ${item.name}: $e');
+          itemImages[item] = null;
+        }
+      } else {
+        itemImages[item] = null;
+      }
+    }
+
     double totalPrice = 0;
     double totalDiscount = 0;
     selectedItems.forEach((item, quantity) {
@@ -84,7 +105,7 @@ Future<void> generateAndSharePdf(
               _buildBillToSection(
                   template, billto, buyerAddress, buyerEmail, buyerPhone),
               pw.SizedBox(height: 20),
-              _buildItemsSection(template, selectedItems, currency),
+              _buildItemsSection(template, selectedItems, currency, itemImages),
               pw.SizedBox(height: 20),
               _buildTotal(template, totalPrice, totalDiscount, currency),
               pw.SizedBox(height: 15),
@@ -270,7 +291,10 @@ pw.Widget _buildBillToSection(InvoiceTemplate template, String billto,
 }
 
 pw.Widget _buildItemsSection(
-    InvoiceTemplate template, Map<Item, int> selectedItems, Currency currency) {
+    InvoiceTemplate template,
+    Map<Item, int> selectedItems,
+    Currency currency,
+    Map<Item, pw.MemoryImage?> itemImages) {
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
     children: [
@@ -280,13 +304,16 @@ pw.Widget _buildItemsSection(
               fontWeight: pw.FontWeight.bold,
               color: template.colors.primary)),
       pw.SizedBox(height: 10),
-      _buildItemsTable(template, selectedItems, currency),
+      _buildItemsTable(template, selectedItems, currency, itemImages),
     ],
   );
 }
 
 pw.Widget _buildItemsTable(
-    InvoiceTemplate template, Map<Item, int> selectedItems, Currency currency) {
+    InvoiceTemplate template,
+    Map<Item, int> selectedItems,
+    Currency currency,
+    Map<Item, pw.MemoryImage?> itemImages) {
   final borderColor = template.colors.border;
   final headerColor = template.colors.secondary;
   final textColor = template.colors.text;
@@ -297,12 +324,13 @@ pw.Widget _buildItemsTable(
         ? pw.TableBorder.all(color: borderColor)
         : null,
     columnWidths: {
-      0: const pw.FlexColumnWidth(3), // Item Name
-      1: const pw.FlexColumnWidth(2), // Type
-      2: const pw.FlexColumnWidth(1), // Qty
-      3: const pw.FlexColumnWidth(2), // Price
-      4: const pw.FlexColumnWidth(2), // Discount
-      5: const pw.FlexColumnWidth(2), // Final Price
+      0: const pw.FlexColumnWidth(1), // Image
+      1: const pw.FlexColumnWidth(3), // Item Name
+      2: const pw.FlexColumnWidth(2), // Type
+      3: const pw.FlexColumnWidth(1), // Qty
+      4: const pw.FlexColumnWidth(2), // Price
+      5: const pw.FlexColumnWidth(2), // Discount
+      6: const pw.FlexColumnWidth(2), // Final Price
     },
     children: [
       pw.TableRow(
@@ -310,6 +338,12 @@ pw.Widget _buildItemsTable(
           color: template.layout.tableStyle == 'simple' ? null : headerColor,
         ),
         children: [
+          pw.Padding(
+            padding: const pw.EdgeInsets.all(8),
+            child: pw.Text('Image',
+                style: pw.TextStyle(
+                    fontWeight: pw.FontWeight.bold, color: primaryColor)),
+          ),
           pw.Padding(
             padding: const pw.EdgeInsets.all(8),
             child: pw.Text('Item Name',
@@ -377,6 +411,17 @@ pw.Widget _buildItemsTable(
                 : null,
           ),
           children: [
+            // Image column
+            pw.Padding(
+              padding: const pw.EdgeInsets.all(8),
+              child: item.includeImageInPdf && itemImages[item] != null
+                  ? pw.Container(
+                      width: 30,
+                      height: 30,
+                      child: pw.Image(itemImages[item]!, fit: pw.BoxFit.cover),
+                    )
+                  : pw.Text('-', style: pw.TextStyle(color: textColor)),
+            ),
             pw.Padding(
               padding: const pw.EdgeInsets.all(8),
               child: pw.Text(item.name, style: pw.TextStyle(color: textColor)),
