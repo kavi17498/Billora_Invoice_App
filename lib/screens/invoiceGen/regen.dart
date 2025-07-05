@@ -107,10 +107,6 @@ class _RegenPageState extends State<RegenPage> {
         pw.Page(
           pageFormat: PdfPageFormat.a4,
           margin: const pw.EdgeInsets.all(32),
-          theme: pw.ThemeData.withFont(
-            base: pw.Font.helvetica(),
-            bold: pw.Font.helveticaBold(),
-          ),
           build: (pw.Context context) {
             return pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -205,22 +201,14 @@ class _RegenPageState extends State<RegenPage> {
                 fontSize: 18,
                 fontWeight: pw.FontWeight.bold,
                 color: template.colors.text)),
-        if (userData?['email'] != null &&
-            userData!['email'].toString().isNotEmpty)
-          pw.Text('Email: ${userData['email']}',
-              style: pw.TextStyle(color: template.colors.text)),
-        if (userData?['phone'] != null &&
-            userData!['phone'].toString().isNotEmpty)
-          pw.Text('Phone: ${userData['phone']}',
-              style: pw.TextStyle(color: template.colors.text)),
-        if (userData?['address'] != null &&
-            userData!['address'].toString().isNotEmpty)
-          pw.Text('Address: ${userData['address']}',
-              style: pw.TextStyle(color: template.colors.text)),
-        if (userData?['website'] != null &&
-            userData!['website'].toString().isNotEmpty)
-          pw.Text('Website: ${userData['website']}',
-              style: pw.TextStyle(color: template.colors.text)),
+        pw.Text('Email: ${userData?['email'] ?? ''}',
+            style: pw.TextStyle(color: template.colors.text)),
+        pw.Text('Phone: ${userData?['phone'] ?? ''}',
+            style: pw.TextStyle(color: template.colors.text)),
+        pw.Text('Address: ${userData?['address'] ?? ''}',
+            style: pw.TextStyle(color: template.colors.text)),
+        pw.Text('Website: ${userData?['website'] ?? ''}',
+            style: pw.TextStyle(color: template.colors.text)),
       ],
     );
   }
@@ -237,22 +225,14 @@ class _RegenPageState extends State<RegenPage> {
                 fontSize: 18,
                 fontWeight: pw.FontWeight.bold,
                 color: template.colors.text)),
-        if (userData?['email'] != null &&
-            userData!['email'].toString().isNotEmpty)
-          pw.Text('Email: ${userData['email']}',
-              style: pw.TextStyle(color: template.colors.text)),
-        if (userData?['phone'] != null &&
-            userData!['phone'].toString().isNotEmpty)
-          pw.Text('Phone: ${userData['phone']}',
-              style: pw.TextStyle(color: template.colors.text)),
-        if (userData?['address'] != null &&
-            userData!['address'].toString().isNotEmpty)
-          pw.Text('Address: ${userData['address']}',
-              style: pw.TextStyle(color: template.colors.text)),
-        if (userData?['website'] != null &&
-            userData!['website'].toString().isNotEmpty)
-          pw.Text('Website: ${userData['website']}',
-              style: pw.TextStyle(color: template.colors.text)),
+        pw.Text('Email: ${userData?['email'] ?? ''}',
+            style: pw.TextStyle(color: template.colors.text)),
+        pw.Text('Phone: ${userData?['phone'] ?? ''}',
+            style: pw.TextStyle(color: template.colors.text)),
+        pw.Text('Address: ${userData?['address'] ?? ''}',
+            style: pw.TextStyle(color: template.colors.text)),
+        pw.Text('Website: ${userData?['website'] ?? ''}',
+            style: pw.TextStyle(color: template.colors.text)),
       ],
     );
   }
@@ -273,24 +253,16 @@ class _RegenPageState extends State<RegenPage> {
                     fontSize: 18,
                     fontWeight: pw.FontWeight.bold,
                     color: template.colors.text)),
-            if (userData?['email'] != null &&
-                userData!['email'].toString().isNotEmpty)
-              pw.Text('Email: ${userData['email']}',
-                  style: pw.TextStyle(color: template.colors.text)),
-            if (userData?['phone'] != null &&
-                userData!['phone'].toString().isNotEmpty)
-              pw.Text('Phone: ${userData['phone']}',
-                  style: pw.TextStyle(color: template.colors.text)),
-            if (userData?['address'] != null &&
-                userData!['address'].toString().isNotEmpty)
-              pw.Text('Address: ${userData['address']}',
-                  textAlign: pw.TextAlign.right,
-                  style: pw.TextStyle(color: template.colors.text)),
-            if (userData?['website'] != null &&
-                userData!['website'].toString().isNotEmpty)
-              pw.Text('Website: ${userData['website']}',
-                  textAlign: pw.TextAlign.right,
-                  style: pw.TextStyle(color: template.colors.text)),
+            pw.Text('Email: ${userData?['email'] ?? ''}',
+                style: pw.TextStyle(color: template.colors.text)),
+            pw.Text('Phone: ${userData?['phone'] ?? ''}',
+                style: pw.TextStyle(color: template.colors.text)),
+            pw.Text('Address: ${userData?['address'] ?? ''}',
+                textAlign: pw.TextAlign.right,
+                style: pw.TextStyle(color: template.colors.text)),
+            pw.Text('Website: ${userData?['website'] ?? ''}',
+                textAlign: pw.TextAlign.right,
+                style: pw.TextStyle(color: template.colors.text)),
           ],
         ),
       ],
@@ -374,8 +346,9 @@ class _RegenPageState extends State<RegenPage> {
           : null,
       columnWidths: {
         0: const pw.FlexColumnWidth(3), // Item Name
-        1: const pw.FlexColumnWidth(1), // Qty
-        2: const pw.FlexColumnWidth(2), // Price
+        1: const pw.FlexColumnWidth(2), // Type
+        2: const pw.FlexColumnWidth(1), // Qty
+        3: const pw.FlexColumnWidth(2), // Price
       },
       children: [
         pw.TableRow(
@@ -386,6 +359,12 @@ class _RegenPageState extends State<RegenPage> {
             pw.Padding(
               padding: const pw.EdgeInsets.all(8),
               child: pw.Text('Item Name',
+                  style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold, color: primaryColor)),
+            ),
+            pw.Padding(
+              padding: const pw.EdgeInsets.all(8),
+              child: pw.Text('Type',
                   style: pw.TextStyle(
                       fontWeight: pw.FontWeight.bold, color: primaryColor)),
             ),
@@ -420,6 +399,11 @@ class _RegenPageState extends State<RegenPage> {
                 padding: const pw.EdgeInsets.all(8),
                 child:
                     pw.Text(item.name, style: pw.TextStyle(color: textColor)),
+              ),
+              pw.Padding(
+                padding: const pw.EdgeInsets.all(8),
+                child:
+                    pw.Text(item.type, style: pw.TextStyle(color: textColor)),
               ),
               pw.Padding(
                 padding: const pw.EdgeInsets.all(8),
@@ -459,11 +443,6 @@ class _RegenPageState extends State<RegenPage> {
 
   pw.Widget _buildPaymentInstructions(
       InvoiceTemplate template, Map<String, dynamic>? userData) {
-    final note = userData?['note'];
-    if (note == null || note.toString().isEmpty) {
-      return pw.SizedBox.shrink(); // Don't show empty payment instructions
-    }
-
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
@@ -471,7 +450,7 @@ class _RegenPageState extends State<RegenPage> {
             style: pw.TextStyle(
                 fontWeight: pw.FontWeight.bold, color: template.colors.text)),
         pw.SizedBox(height: 5),
-        pw.Text(note.toString(),
+        pw.Text('${userData?['note'] ?? ''}',
             style: pw.TextStyle(color: template.colors.text)),
       ],
     );
