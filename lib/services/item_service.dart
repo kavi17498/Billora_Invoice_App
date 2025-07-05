@@ -1,6 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 
 import 'database_service.dart';
+import 'currency_service.dart';
 
 class Item {
   int? id;
@@ -43,7 +44,18 @@ class Item {
   // Get discount display text
   String get discountDisplay {
     if (discountAmount > 0) {
-      return 'Rs. ${discountAmount.toStringAsFixed(2)} off';
+      return 'Fixed amount off';
+    } else if (discountPercentage > 0) {
+      return '${discountPercentage.toStringAsFixed(1)}% off';
+    }
+    return '';
+  }
+
+  // Method to get formatted discount display with currency
+  Future<String> getDiscountDisplayWithCurrency() async {
+    if (discountAmount > 0) {
+      final currency = await CurrencyService.getCurrentCurrency();
+      return '${currency.symbol} ${discountAmount.toStringAsFixed(2)} off';
     } else if (discountPercentage > 0) {
       return '${discountPercentage.toStringAsFixed(1)}% off';
     }

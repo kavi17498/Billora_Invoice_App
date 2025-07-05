@@ -37,6 +37,14 @@ class SettingsPage extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
           _buildSettingsCard(
             context,
+            icon: Icons.attach_money,
+            title: "Currency Settings",
+            subtitle: "Select your preferred currency for invoices",
+            onTap: () => Navigator.pushNamed(context, "/currency-settings"),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          _buildSettingsCard(
+            context,
             icon: Icons.palette_outlined,
             title: "Change Theme",
             subtitle: "Coming soon - App theme customization",

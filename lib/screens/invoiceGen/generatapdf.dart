@@ -4,6 +4,7 @@ import 'package:invoiceapp/screens/invoiceGen/pdfview.dart';
 import 'package:invoiceapp/services/database_service.dart';
 import 'package:invoiceapp/services/invoice_service.dart';
 import 'package:invoiceapp/services/template_service.dart';
+import 'package:invoiceapp/services/currency_service.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/pdf.dart';
@@ -23,6 +24,7 @@ Future<void> generateAndSharePdf(
   final pdf = pw.Document();
   final userData = await DatabaseService.instance.getUserById(1);
   final template = await TemplateService.getSelectedTemplate();
+  final currency = await CurrencyService.getCurrentCurrency();
 
   showDialog(
     context: context,
@@ -82,9 +84,9 @@ Future<void> generateAndSharePdf(
               _buildBillToSection(
                   template, billto, buyerAddress, buyerEmail, buyerPhone),
               pw.SizedBox(height: 20),
-              _buildItemsSection(template, selectedItems),
+              _buildItemsSection(template, selectedItems, currency),
               pw.SizedBox(height: 20),
-              _buildTotal(template, totalPrice, totalDiscount),
+              _buildTotal(template, totalPrice, totalDiscount, currency),
               pw.SizedBox(height: 15),
               _buildPaymentInstructions(template, userData),
               pw.Divider(color: template.colors.border),
@@ -268,7 +270,7 @@ pw.Widget _buildBillToSection(InvoiceTemplate template, String billto,
 }
 
 pw.Widget _buildItemsSection(
-    InvoiceTemplate template, Map<Item, int> selectedItems) {
+    InvoiceTemplate template, Map<Item, int> selectedItems, Currency currency) {
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
     children: [
@@ -278,13 +280,13 @@ pw.Widget _buildItemsSection(
               fontWeight: pw.FontWeight.bold,
               color: template.colors.primary)),
       pw.SizedBox(height: 10),
-      _buildItemsTable(template, selectedItems),
+      _buildItemsTable(template, selectedItems, currency),
     ],
   );
 }
 
 pw.Widget _buildItemsTable(
-    InvoiceTemplate template, Map<Item, int> selectedItems) {
+    InvoiceTemplate template, Map<Item, int> selectedItems, Currency currency) {
   final borderColor = template.colors.border;
   final headerColor = template.colors.secondary;
   final textColor = template.colors.text;
@@ -328,7 +330,7 @@ pw.Widget _buildItemsTable(
           ),
           pw.Padding(
             padding: const pw.EdgeInsets.all(8),
-            child: pw.Text('Price (Rs)',
+            child: pw.Text('Price (${currency.symbol})',
                 style: pw.TextStyle(
                     fontWeight: pw.FontWeight.bold, color: primaryColor)),
           ),
@@ -340,7 +342,7 @@ pw.Widget _buildItemsTable(
           ),
           pw.Padding(
             padding: const pw.EdgeInsets.all(8),
-            child: pw.Text('Final Price (Rs)',
+            child: pw.Text('Final Price (${currency.symbol})',
                 style: pw.TextStyle(
                     fontWeight: pw.FontWeight.bold, color: primaryColor)),
           ),
@@ -362,7 +364,8 @@ pw.Widget _buildItemsTable(
           discountText = '${item.discountPercentage.toStringAsFixed(1)}%';
         } else if (item.discountAmount > 0) {
           itemDiscount = item.discountAmount * qty;
-          discountText = 'Rs. ${item.discountAmount.toStringAsFixed(2)}';
+          discountText =
+              '${currency.symbol} ${item.discountAmount.toStringAsFixed(2)}';
         }
 
         double finalPrice = itemSubtotal - itemDiscount;
@@ -388,7 +391,8 @@ pw.Widget _buildItemsTable(
             ),
             pw.Padding(
               padding: const pw.EdgeInsets.all(8),
-              child: pw.Text('Rs. ${item.price.toStringAsFixed(2)}',
+              child: pw.Text(
+                  '${currency.symbol} ${item.price.toStringAsFixed(2)}',
                   style: pw.TextStyle(color: textColor)),
             ),
             pw.Padding(
@@ -398,7 +402,8 @@ pw.Widget _buildItemsTable(
             ),
             pw.Padding(
               padding: const pw.EdgeInsets.all(8),
-              child: pw.Text('Rs. ${finalPrice.toStringAsFixed(2)}',
+              child: pw.Text(
+                  '${currency.symbol} ${finalPrice.toStringAsFixed(2)}',
                   style: pw.TextStyle(color: textColor)),
             ),
           ],
@@ -408,8 +413,8 @@ pw.Widget _buildItemsTable(
   );
 }
 
-pw.Widget _buildTotal(
-    InvoiceTemplate template, double totalPrice, double totalDiscount) {
+pw.Widget _buildTotal(InvoiceTemplate template, double totalPrice,
+    double totalDiscount, Currency currency) {
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.end,
     children: [
@@ -423,7 +428,7 @@ pw.Widget _buildTotal(
             border: pw.Border.all(color: template.colors.border),
           ),
           child: pw.Text(
-              'Total Discount: Rs. ${totalDiscount.toStringAsFixed(2)}',
+              'Total Discount: ${currency.symbol} ${totalDiscount.toStringAsFixed(2)}',
               style: pw.TextStyle(
                   fontSize: 12,
                   color: template.colors.text,
@@ -436,7 +441,8 @@ pw.Widget _buildTotal(
           color: template.colors.secondary,
           borderRadius: pw.BorderRadius.circular(4),
         ),
-        child: pw.Text('Total: Rs. ${totalPrice.toStringAsFixed(2)}',
+        child: pw.Text(
+            'Total: ${currency.symbol} ${totalPrice.toStringAsFixed(2)}',
             style: pw.TextStyle(
                 fontSize: 16,
                 fontWeight: pw.FontWeight.bold,

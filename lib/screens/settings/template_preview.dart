@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:invoiceapp/models/invoice_template.dart';
+import 'package:invoiceapp/services/currency_service.dart';
 import 'package:invoiceapp/constrains/Colors.dart';
 import 'package:invoiceapp/constrains/TextStyles.dart';
 import 'package:invoiceapp/constrains/Dimensions.dart';
@@ -447,11 +448,19 @@ class TemplatePreviewScreen extends StatelessWidget {
                   ),
                   Expanded(
                     flex: 2,
-                    child: Text(
-                      'Rs. ${(100 * (index + 1)).toStringAsFixed(2)}',
-                      style: TextStyle(
-                        color: _pdfColorToFlutterColor(template.colors.text),
-                      ),
+                    child: FutureBuilder<String>(
+                      future: CurrencyService.formatAmountWithCurrentCurrency(
+                          100 * (index + 1).toDouble()),
+                      builder: (context, snapshot) {
+                        return Text(
+                          snapshot.data ??
+                              'Rs. ${(100 * (index + 1)).toStringAsFixed(2)}',
+                          style: TextStyle(
+                            color:
+                                _pdfColorToFlutterColor(template.colors.text),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],
@@ -473,13 +482,18 @@ class TemplatePreviewScreen extends StatelessWidget {
             color: _pdfColorToFlutterColor(template.colors.secondary),
             borderRadius: BorderRadius.circular(AppSizing.radiusMD),
           ),
-          child: Text(
-            'Total: Rs. 600.00',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: _pdfColorToFlutterColor(template.colors.primary),
-            ),
+          child: FutureBuilder<String>(
+            future: CurrencyService.formatAmountWithCurrentCurrency(600.00),
+            builder: (context, snapshot) {
+              return Text(
+                'Total: ${snapshot.data ?? 'Rs. 600.00'}',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: _pdfColorToFlutterColor(template.colors.primary),
+                ),
+              );
+            },
           ),
         ),
       ],
