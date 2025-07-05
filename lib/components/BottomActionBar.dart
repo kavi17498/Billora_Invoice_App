@@ -27,6 +27,9 @@ class BottomActionBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final isSmallScreen = screenSize.height < 600;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -40,7 +43,7 @@ class BottomActionBar extends StatelessWidget {
           iconRight: true,
         ),
         if (showSkipButton && onSkipPressed != null) ...[
-          SizedBox(height: AppSpacing.sm),
+          SizedBox(height: isSmallScreen ? AppSpacing.xs : AppSpacing.sm),
           SkipButton(
             onTap: onSkipPressed!,
           ),
