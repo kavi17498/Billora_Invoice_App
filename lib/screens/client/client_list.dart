@@ -52,13 +52,18 @@ class _ClientListScreenState extends State<ClientListScreen> {
   Widget _buildClientCard(Map<String, dynamic> client) {
     return AppCard(
       child: InkWell(
-        onTap: () {
-          Navigator.push(
+        onTap: () async {
+          final result = await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (_) => ClientDetailsScreen(clientId: client['id']),
             ),
           );
+
+          // If client was deleted or updated, refresh the list
+          if (result == true) {
+            _loadClients();
+          }
         },
         borderRadius: BorderRadius.circular(AppSizing.radiusMD),
         child: Padding(

@@ -26,7 +26,7 @@ class ClientService {
     print("Client table created.");
   }
 
-  static Future<void> insertClient({
+  static Future<int> insertClient({
     required String name,
     String? email,
     String? phone,
@@ -34,14 +34,15 @@ class ClientService {
     String? note,
   }) async {
     final db = await DatabaseService.instance.getdatabase();
-    await db.insert(_clientTable, {
+    final id = await db.insert(_clientTable, {
       _name: name,
       _email: email,
       _phone: phone,
       _address: address,
       _note: note,
     });
-    print("Client inserted.");
+    print("Client inserted with ID: $id.");
+    return id;
   }
 
   static Future<Map<String, dynamic>?> getClientById(int id) async {
