@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:invoiceapp/constrains/Colors.dart';
 import 'package:invoiceapp/constrains/TextStyles.dart';
 import 'package:invoiceapp/constrains/Dimensions.dart';
-import 'package:invoiceapp/components/AppAppBar.dart';
 import 'package:invoiceapp/components/ScreenHeader.dart';
 import 'package:invoiceapp/services/currency_service.dart';
 

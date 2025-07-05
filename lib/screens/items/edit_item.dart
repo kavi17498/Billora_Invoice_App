@@ -33,6 +33,7 @@ class _EditItemPageState extends State<EditItemPage> {
   final TextEditingController _quantityController = TextEditingController();
 
   String? _imagePath;
+  bool _includeImageInPdf = false;
   final ImagePicker _picker = ImagePicker();
 
   @override
@@ -61,6 +62,7 @@ class _EditItemPageState extends State<EditItemPage> {
         _costController.text = _item!.cost.toString();
         _quantityController.text = _item!.quantity.toString();
         _imagePath = _item!.imagePath.isNotEmpty ? _item!.imagePath : null;
+        _includeImageInPdf = _item!.includeImageInPdf;
       }
     } catch (e) {
       if (mounted) {
@@ -88,6 +90,10 @@ class _EditItemPageState extends State<EditItemPage> {
         imagePath: _imagePath ?? '',
         type: 'item', // Always 'item' now
         quantity: int.tryParse(_quantityController.text) ?? 1,
+        discountPercentage:
+            _item!.discountPercentage, // Keep existing discount values
+        discountAmount: _item!.discountAmount, // Keep existing discount values
+        includeImageInPdf: _includeImageInPdf,
       );
 
       await ItemService.updateItem(updated);
@@ -507,6 +513,61 @@ class _EditItemPageState extends State<EditItemPage> {
                                         ),
                                       ),
                                     ],
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: AppSpacing.lg),
+
+                              // Include in PDF toggle
+                              Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.all(AppSpacing.md),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: AppColors.border),
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: AppColors.surface,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.picture_as_pdf_rounded,
+                                      color: AppColors.primary,
+                                      size: 24,
+                                    ),
+                                    SizedBox(width: AppSpacing.md),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Include Image in PDF',
+                                            style: AppTextStyles.bodyMedium
+                                                .copyWith(
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          SizedBox(height: AppSpacing.xs),
+                                          Text(
+                                            'When enabled, the item image will appear as a small thumbnail in generated invoice PDFs',
+                                            style: AppTextStyles.bodySmall
+                                                .copyWith(
+                                              color: AppColors.textSecondary,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(width: AppSpacing.md),
+                                    Switch.adaptive(
+                                      value: _includeImageInPdf,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _includeImageInPdf = value;
+                                        });
+                                      },
+                                      activeColor: AppColors.primary,
+                                    ),
                                   ],
                                 ),
                               ),

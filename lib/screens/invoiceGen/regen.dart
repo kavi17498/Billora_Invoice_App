@@ -100,6 +100,29 @@ class _RegenPageState extends State<RegenPage> {
         }
       }
 
+      // Pre-load item images
+      Map<Item, pw.MemoryImage?> itemImages = {};
+      for (Item item in widget.selectedItems.keys) {
+        if (item.includeImageInPdf && item.imagePath.isNotEmpty) {
+          try {
+            final file = File(item.imagePath);
+            if (await file.exists()) {
+              final imageBytes = await file.readAsBytes();
+              itemImages[item] = pw.MemoryImage(imageBytes);
+              print('[REGEN] Successfully loaded image for ${item.name}');
+            } else {
+              itemImages[item] = null;
+              print('[REGEN] Image file not found for ${item.name}');
+            }
+          } catch (e) {
+            print('[REGEN] Error loading item image for ${item.name}: $e');
+            itemImages[item] = null;
+          }
+        } else {
+          itemImages[item] = null;
+        }
+      }
+
       // Calculate total price and handle null quantities
       double totalPrice = 0;
       double totalDiscount = 0;
@@ -134,7 +157,8 @@ class _RegenPageState extends State<RegenPage> {
                 _buildBillToSection(template, widget.billTo,
                     widget.buyerAddress, widget.buyerEmail, widget.buyerPhone),
                 pw.SizedBox(height: 20),
-                _buildItemsSection(template, widget.selectedItems, currency),
+                _buildItemsSection(
+                    template, widget.selectedItems, currency, itemImages),
                 pw.SizedBox(height: 20),
                 _buildTotal(template, totalPrice, totalDiscount, currency),
                 pw.SizedBox(height: 15),
@@ -333,8 +357,11 @@ class _RegenPageState extends State<RegenPage> {
     );
   }
 
-  pw.Widget _buildItemsSection(InvoiceTemplate template,
-      Map<Item, int?> selectedItems, Currency currency) {
+  pw.Widget _buildItemsSection(
+      InvoiceTemplate template,
+      Map<Item, int?> selectedItems,
+      Currency currency,
+      Map<Item, pw.MemoryImage?> itemImages) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
@@ -344,13 +371,16 @@ class _RegenPageState extends State<RegenPage> {
                 fontWeight: pw.FontWeight.bold,
                 color: template.colors.primary)),
         pw.SizedBox(height: 10),
-        _buildItemsTable(template, selectedItems, currency),
+        _buildItemsTable(template, selectedItems, currency, itemImages),
       ],
     );
   }
 
-  pw.Widget _buildItemsTable(InvoiceTemplate template,
-      Map<Item, int?> selectedItems, Currency currency) {
+  pw.Widget _buildItemsTable(
+      InvoiceTemplate template,
+      Map<Item, int?> selectedItems,
+      Currency currency,
+      Map<Item, pw.MemoryImage?> itemImages) {
     final borderColor = template.colors.border;
     final headerColor = template.colors.secondary;
     final textColor = template.colors.text;
@@ -361,12 +391,13 @@ class _RegenPageState extends State<RegenPage> {
           ? pw.TableBorder.all(color: borderColor)
           : null,
       columnWidths: {
-        0: const pw.FlexColumnWidth(3), // Item Name
-        1: const pw.FlexColumnWidth(2), // Type
-        2: const pw.FlexColumnWidth(1), // Qty
-        3: const pw.FlexColumnWidth(2), // Price
-        4: const pw.FlexColumnWidth(2), // Discount
-        5: const pw.FlexColumnWidth(2), // Final Price
+        0: const pw.FlexColumnWidth(1), // Image
+        1: const pw.FlexColumnWidth(3), // Item Name
+        2: const pw.FlexColumnWidth(2), // Type
+        3: const pw.FlexColumnWidth(1), // Qty
+        4: const pw.FlexColumnWidth(2), // Price
+        5: const pw.FlexColumnWidth(2), // Discount
+        6: const pw.FlexColumnWidth(2), // Final Price
       },
       children: [
         pw.TableRow(
@@ -374,6 +405,12 @@ class _RegenPageState extends State<RegenPage> {
             color: template.layout.tableStyle == 'simple' ? null : headerColor,
           ),
           children: [
+            pw.Padding(
+              padding: const pw.EdgeInsets.all(8),
+              child: pw.Text('Image',
+                  style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold, color: primaryColor)),
+            ),
             pw.Padding(
               padding: const pw.EdgeInsets.all(8),
               child: pw.Text('Item Name',
@@ -441,6 +478,18 @@ class _RegenPageState extends State<RegenPage> {
                   : null,
             ),
             children: [
+              // Image column
+              pw.Padding(
+                padding: const pw.EdgeInsets.all(8),
+                child: item.includeImageInPdf && itemImages[item] != null
+                    ? pw.Container(
+                        width: 30,
+                        height: 30,
+                        child:
+                            pw.Image(itemImages[item]!, fit: pw.BoxFit.cover),
+                      )
+                    : pw.Text('-', style: pw.TextStyle(color: textColor)),
+              ),
               pw.Padding(
                 padding: const pw.EdgeInsets.all(8),
                 child:
