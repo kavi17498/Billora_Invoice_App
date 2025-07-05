@@ -1,5 +1,6 @@
 import 'package:invoiceapp/services/invoice_service.dart';
 import 'package:invoiceapp/services/item_service.dart';
+import 'package:invoiceapp/services/template_service.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'client_service.dart';
@@ -32,7 +33,7 @@ class DatabaseService {
 
     _database = await openDatabase(
       databasepath,
-      version: 2, // Incremented version to allow table creation in onUpgrade
+      version: 3, // Incremented version to allow template tables
       onCreate: (db, version) async {
         print("Creating user table...");
         await db.execute('''
@@ -54,12 +55,16 @@ class DatabaseService {
         await ClientService.createClientTable(db);
         await ItemService.createItemTable(db);
         await InvoiceService.createInvoiceTables(db);
+        await TemplateService.createTemplateTable(db);
       },
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 2) {
           await ClientService.createClientTable(db);
           await ItemService.createItemTable(db);
-          await InvoiceService.createInvoiceTables(db); // Add this
+          await InvoiceService.createInvoiceTables(db);
+        }
+        if (oldVersion < 3) {
+          await TemplateService.createTemplateTable(db);
         }
       },
     );
