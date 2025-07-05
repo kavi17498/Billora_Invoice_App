@@ -4,6 +4,7 @@ import 'package:invoiceapp/screens/invoiceGen/regenpdf.dart';
 import 'package:invoiceapp/services/database_service.dart';
 import 'package:invoiceapp/services/item_service.dart';
 import 'package:invoiceapp/services/template_service.dart';
+import 'package:invoiceapp/services/currency_service.dart';
 import 'package:invoiceapp/models/invoice_template.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -79,6 +80,9 @@ class _RegenPageState extends State<RegenPage> {
     }
 
     try {
+      // Get current currency
+      final currency = await CurrencyService.getCurrentCurrency();
+
       // Handle logo loading
       pw.MemoryImage? companyLogo;
       final companyLogoUrl = userData['company_logo_url'];
@@ -130,9 +134,9 @@ class _RegenPageState extends State<RegenPage> {
                 _buildBillToSection(template, widget.billTo,
                     widget.buyerAddress, widget.buyerEmail, widget.buyerPhone),
                 pw.SizedBox(height: 20),
-                _buildItemsSection(template, widget.selectedItems),
+                _buildItemsSection(template, widget.selectedItems, currency),
                 pw.SizedBox(height: 20),
-                _buildTotal(template, totalPrice, totalDiscount),
+                _buildTotal(template, totalPrice, totalDiscount, currency),
                 pw.SizedBox(height: 15),
                 _buildPaymentInstructions(template, userData),
                 pw.Divider(color: template.colors.border),
@@ -329,8 +333,8 @@ class _RegenPageState extends State<RegenPage> {
     );
   }
 
-  pw.Widget _buildItemsSection(
-      InvoiceTemplate template, Map<Item, int?> selectedItems) {
+  pw.Widget _buildItemsSection(InvoiceTemplate template,
+      Map<Item, int?> selectedItems, Currency currency) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
@@ -340,13 +344,13 @@ class _RegenPageState extends State<RegenPage> {
                 fontWeight: pw.FontWeight.bold,
                 color: template.colors.primary)),
         pw.SizedBox(height: 10),
-        _buildItemsTable(template, selectedItems),
+        _buildItemsTable(template, selectedItems, currency),
       ],
     );
   }
 
-  pw.Widget _buildItemsTable(
-      InvoiceTemplate template, Map<Item, int?> selectedItems) {
+  pw.Widget _buildItemsTable(InvoiceTemplate template,
+      Map<Item, int?> selectedItems, Currency currency) {
     final borderColor = template.colors.border;
     final headerColor = template.colors.secondary;
     final textColor = template.colors.text;
@@ -390,7 +394,7 @@ class _RegenPageState extends State<RegenPage> {
             ),
             pw.Padding(
               padding: const pw.EdgeInsets.all(8),
-              child: pw.Text('Price (Rs)',
+              child: pw.Text('Price (${currency.symbol})',
                   style: pw.TextStyle(
                       fontWeight: pw.FontWeight.bold, color: primaryColor)),
             ),
@@ -402,7 +406,7 @@ class _RegenPageState extends State<RegenPage> {
             ),
             pw.Padding(
               padding: const pw.EdgeInsets.all(8),
-              child: pw.Text('Final Price (Rs)',
+              child: pw.Text('Final Price (${currency.symbol})',
                   style: pw.TextStyle(
                       fontWeight: pw.FontWeight.bold, color: primaryColor)),
             ),
@@ -424,7 +428,8 @@ class _RegenPageState extends State<RegenPage> {
             discountText = '${item.discountPercentage.toStringAsFixed(1)}%';
           } else if (item.discountAmount > 0) {
             itemDiscount = item.discountAmount * qty;
-            discountText = 'Rs. ${item.discountAmount.toStringAsFixed(2)}';
+            discountText =
+                '${currency.symbol} ${item.discountAmount.toStringAsFixed(2)}';
           }
 
           double finalPrice = itemSubtotal - itemDiscount;
@@ -452,7 +457,8 @@ class _RegenPageState extends State<RegenPage> {
               ),
               pw.Padding(
                 padding: const pw.EdgeInsets.all(8),
-                child: pw.Text('Rs. ${item.price.toStringAsFixed(2)}',
+                child: pw.Text(
+                    '${currency.symbol} ${item.price.toStringAsFixed(2)}',
                     style: pw.TextStyle(color: textColor)),
               ),
               pw.Padding(
@@ -462,7 +468,8 @@ class _RegenPageState extends State<RegenPage> {
               ),
               pw.Padding(
                 padding: const pw.EdgeInsets.all(8),
-                child: pw.Text('Rs. ${finalPrice.toStringAsFixed(2)}',
+                child: pw.Text(
+                    '${currency.symbol} ${finalPrice.toStringAsFixed(2)}',
                     style: pw.TextStyle(color: textColor)),
               ),
             ],
@@ -472,8 +479,8 @@ class _RegenPageState extends State<RegenPage> {
     );
   }
 
-  pw.Widget _buildTotal(
-      InvoiceTemplate template, double totalPrice, double totalDiscount) {
+  pw.Widget _buildTotal(InvoiceTemplate template, double totalPrice,
+      double totalDiscount, Currency currency) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.end,
       children: [
@@ -487,7 +494,7 @@ class _RegenPageState extends State<RegenPage> {
               border: pw.Border.all(color: template.colors.border),
             ),
             child: pw.Text(
-                'Total Discount: Rs. ${totalDiscount.toStringAsFixed(2)}',
+                'Total Discount: ${currency.symbol} ${totalDiscount.toStringAsFixed(2)}',
                 style: pw.TextStyle(
                     fontSize: 12,
                     color: template.colors.text,
@@ -500,7 +507,8 @@ class _RegenPageState extends State<RegenPage> {
             color: template.colors.secondary,
             borderRadius: pw.BorderRadius.circular(4),
           ),
-          child: pw.Text('Total: Rs. ${totalPrice.toStringAsFixed(2)}',
+          child: pw.Text(
+              'Total: ${currency.symbol} ${totalPrice.toStringAsFixed(2)}',
               style: pw.TextStyle(
                   fontSize: 16,
                   fontWeight: pw.FontWeight.bold,

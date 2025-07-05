@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:invoiceapp/screens/invoiceGen/regen.dart';
 import 'package:invoiceapp/services/invoice_service.dart';
 import 'package:invoiceapp/services/item_service.dart';
+import 'package:invoiceapp/services/currency_service.dart';
 import 'package:invoiceapp/constrains/Colors.dart';
 import 'package:invoiceapp/constrains/TextStyles.dart';
 import 'package:invoiceapp/constrains/Dimensions.dart';
@@ -230,12 +231,20 @@ class _InvoiceListPageState extends State<InvoiceListPage> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              Text(
-                                "\$${invoice['total'].toStringAsFixed(2)}",
-                                style: AppTextStyles.h6.copyWith(
-                                  color: AppColors.success,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              FutureBuilder<String>(
+                                future: CurrencyService
+                                    .formatAmountWithCurrentCurrency(
+                                        invoice['total'].toDouble()),
+                                builder: (context, snapshot) {
+                                  return Text(
+                                    snapshot.data ??
+                                        "\$${invoice['total'].toStringAsFixed(2)}",
+                                    style: AppTextStyles.h6.copyWith(
+                                      color: AppColors.success,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  );
+                                },
                               ),
                               SizedBox(height: AppSpacing.sm),
                               Icon(

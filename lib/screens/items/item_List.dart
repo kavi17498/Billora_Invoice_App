@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:invoiceapp/screens/items/edit_item.dart';
 import 'package:invoiceapp/services/item_service.dart';
+import 'package:invoiceapp/services/currency_service.dart';
 import 'package:invoiceapp/constrains/Colors.dart';
 import 'package:invoiceapp/constrains/TextStyles.dart';
 import 'package:invoiceapp/constrains/Dimensions.dart';
@@ -19,6 +20,12 @@ class ItemListPage extends StatefulWidget {
 class _ItemListPageState extends State<ItemListPage> {
   List<Item> items = [];
   bool _isLoading = true;
+
+  // Format price with current currency
+  Future<String> _formatPrice(double price) async {
+    final currency = await CurrencyService.getCurrentCurrency();
+    return '${currency.symbol}${price.toStringAsFixed(2)}';
+  }
 
   Future<void> _loadItems() async {
     try {
@@ -186,12 +193,18 @@ class _ItemListPageState extends State<ItemListPage> {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      '\$${item.price.toStringAsFixed(2)}',
-                                      style: AppTextStyles.h6.copyWith(
-                                        color: AppColors.success,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                    FutureBuilder<String>(
+                                      future: _formatPrice(item.price),
+                                      builder: (context, snapshot) {
+                                        return Text(
+                                          snapshot.data ??
+                                              '\$${item.price.toStringAsFixed(2)}',
+                                          style: AppTextStyles.h6.copyWith(
+                                            color: AppColors.success,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        );
+                                      },
                                     ),
                                     SizedBox(height: AppSpacing.xs),
                                     Container(
@@ -218,12 +231,18 @@ class _ItemListPageState extends State<ItemListPage> {
                                 // Side by side on larger screens
                                 Row(
                                   children: [
-                                    Text(
-                                      '\$${item.price.toStringAsFixed(2)}',
-                                      style: AppTextStyles.h6.copyWith(
-                                        color: AppColors.success,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                    FutureBuilder<String>(
+                                      future: _formatPrice(item.price),
+                                      builder: (context, snapshot) {
+                                        return Text(
+                                          snapshot.data ??
+                                              '\$${item.price.toStringAsFixed(2)}',
+                                          style: AppTextStyles.h6.copyWith(
+                                            color: AppColors.success,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        );
+                                      },
                                     ),
                                     SizedBox(width: AppSpacing.sm),
                                     Flexible(

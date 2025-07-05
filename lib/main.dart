@@ -11,6 +11,7 @@ import "package:invoiceapp/screens/client/add_client.dart";
 import "package:invoiceapp/screens/client/client_list.dart";
 import "package:invoiceapp/screens/items/item_List.dart";
 import "package:invoiceapp/screens/profile/userdetailsscreen.dart";
+import "package:invoiceapp/screens/settings/currency_settings.dart";
 import "package:invoiceapp/screens/userdashboard.dart";
 import "package:invoiceapp/screens/welcome.dart";
 import "package:invoiceapp/constrains/Colors.dart";
@@ -152,6 +153,7 @@ class Myapp extends StatelessWidget {
         "/addclient": (context) => const AddClientScreen(),
         "/items": (context) => const ItemListPage(),
         "/prfile": (context) => const UserDetailsScreen(),
+        "/currency-settings": (context) => const CurrencySettingsScreen(),
         "/welcome": (context) => const Welcome(),
         "/commingsoon": (context) => const ComingSoon(),
         "/app-tour": (context) => const AppTourScreen(),

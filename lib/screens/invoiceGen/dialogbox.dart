@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:invoiceapp/screens/invoiceGen/generatapdf.dart';
 import 'package:invoiceapp/services/item_service.dart';
 import 'package:invoiceapp/services/client_service.dart';
+import 'package:invoiceapp/services/currency_service.dart';
 import 'dart:math';
 
 Future<void> showInvoiceDialog(BuildContext parentContext) async {
@@ -77,8 +78,14 @@ Future<void> showInvoiceDialog(BuildContext parentContext) async {
                           CheckboxListTile(
                             value: isSelected,
                             title: Text(item.name),
-                            subtitle:
-                                Text('\$${item.price.toStringAsFixed(2)}'),
+                            subtitle: FutureBuilder<String>(
+                              future: CurrencyService
+                                  .formatAmountWithCurrentCurrency(item.price),
+                              builder: (context, snapshot) {
+                                return Text(snapshot.data ??
+                                    '\$${item.price.toStringAsFixed(2)}');
+                              },
+                            ),
                             onChanged: (selected) {
                               setState(() {
                                 if (selected!) {

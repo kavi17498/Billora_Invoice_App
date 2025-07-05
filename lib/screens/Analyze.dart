@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:invoiceapp/services/database_service.dart';
+import 'package:invoiceapp/services/currency_service.dart';
 import 'package:invoiceapp/constrains/Colors.dart';
 import 'package:invoiceapp/constrains/TextStyles.dart';
 import 'package:invoiceapp/constrains/Dimensions.dart';
@@ -208,12 +209,17 @@ class _FinancialAnalysisPageState extends State<FinancialAnalysisPage> {
             ),
           ),
           const SizedBox(height: AppSpacing.xs),
-          Text(
-            'LKR ${value.toStringAsFixed(2)}',
-            style: AppTextStyles.h4.copyWith(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.w600,
-            ),
+          FutureBuilder<String>(
+            future: CurrencyService.formatAmountWithCurrentCurrency(value),
+            builder: (context, snapshot) {
+              return Text(
+                snapshot.data ?? 'LKR ${value.toStringAsFixed(2)}',
+                style: AppTextStyles.h4.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              );
+            },
           ),
         ],
       ),
