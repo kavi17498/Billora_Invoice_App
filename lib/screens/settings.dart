@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:invoiceapp/screens/settings/template_settings.dart';
+import 'package:invoiceapp/constrains/Colors.dart';
+import 'package:invoiceapp/constrains/TextStyles.dart';
+import 'package:invoiceapp/constrains/Dimensions.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -6,32 +10,92 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        title: Text("Settings", style: AppTextStyles.h4),
+        backgroundColor: AppColors.surface,
+        elevation: 0,
+        foregroundColor: AppColors.textPrimary,
+      ),
       body: ListView(
+        padding: const EdgeInsets.all(AppSpacing.lg),
         children: [
-          ListTile(
-            leading: Icon(Icons.person_outline), // outlined version
-            title: Text("Profile Settings"),
-            trailing: Icon(Icons.arrow_forward_ios),
-            onTap: () {
-              Navigator.pushNamed(
-                  context, "/prfile"); // fixed typo from "/prfile"
-            },
+          _buildSettingsCard(
+            context,
+            icon: Icons.person_outline,
+            title: "Profile Settings",
+            subtitle: "Manage your company profile and details",
+            onTap: () => Navigator.pushNamed(context, "/prfile"),
           ),
-          Divider(),
-          ListTile(
-            leading: Icon(Icons.description_outlined), // outlined version
-            title: Text("Change Template"),
-            trailing: Icon(Icons.arrow_forward_ios),
-            onTap: () => Navigator.pushNamed(context, "/commingsoon"),
+          const SizedBox(height: AppSpacing.md),
+          _buildSettingsCard(
+            context,
+            icon: Icons.description_outlined,
+            title: "Invoice Templates",
+            subtitle: "Customize invoice layouts and colors",
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const TemplateSettingsScreen(),
+              ),
+            ),
           ),
-          Divider(),
-          ListTile(
-            leading: Icon(Icons.palette_outlined), // outlined version
-            title: Text("Change Theme"),
-            trailing: Icon(Icons.arrow_forward_ios),
+          const SizedBox(height: AppSpacing.md),
+          _buildSettingsCard(
+            context,
+            icon: Icons.palette_outlined,
+            title: "Change Theme",
+            subtitle: "Coming soon - App theme customization",
             onTap: () => Navigator.pushNamed(context, "/commingsoon"),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSettingsCard(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return Card(
+      color: AppColors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppSizing.radiusLG),
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(AppSpacing.lg),
+        leading: Container(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            color: AppColors.primary.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(AppSizing.radiusMD),
+          ),
+          child: Icon(
+            icon,
+            color: AppColors.primary,
+          ),
+        ),
+        title: Text(
+          title,
+          style: AppTextStyles.h6.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: AppTextStyles.bodyMedium.copyWith(
+            color: AppColors.textSecondary,
+          ),
+        ),
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          color: AppColors.textSecondary,
+          size: 16,
+        ),
+        onTap: onTap,
       ),
     );
   }
