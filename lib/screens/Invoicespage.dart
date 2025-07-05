@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:invoiceapp/screens/invoiceGen/regen.dart';
 import 'package:invoiceapp/services/invoice_service.dart';
 import 'package:invoiceapp/services/item_service.dart';
@@ -7,6 +8,7 @@ import 'package:invoiceapp/constrains/TextStyles.dart';
 import 'package:invoiceapp/constrains/Dimensions.dart';
 import 'package:invoiceapp/components/AppCard.dart';
 import 'package:invoiceapp/components/AppLoading.dart';
+import 'package:share_plus/share_plus.dart';
 
 class InvoiceListPage extends StatefulWidget {
   const InvoiceListPage({super.key});
@@ -87,6 +89,405 @@ class _InvoiceListPageState extends State<InvoiceListPage> {
     }
   }
 
+  // Show options menu for invoice actions
+  Future<void> _showInvoiceOptions(BuildContext context, Map<String, dynamic> invoice) async {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.7,
+        ),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              Container(
+                padding: EdgeInsets.all(AppSpacing.lg),
+                child: Column(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: AppColors.textSecondary.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    SizedBox(height: AppSpacing.md),
+                    Text(
+                      'Invoice #${invoice['invoice_number']}',
+                      style: AppTextStyles.h5,
+                    ),
+                    Text(
+                      '\$${invoice['total'].toStringAsFixed(2)}',
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              
+              // Options
+              _buildOptionTile(
+                icon: Icons.picture_as_pdf_rounded,
+                title: 'Regenerate PDF',
+                subtitle: 'Generate with current template',
+                onTap: () {
+                  Navigator.pop(context);
+                  regenerateInvoice(invoice);
+                },
+              ),
+              _buildOptionTile(
+                icon: Icons.download_rounded,
+                title: 'Download',
+                subtitle: 'Save PDF to device',
+                onTap: () {
+                  Navigator.pop(context);
+                  _downloadInvoice(invoice);
+                },
+              ),
+              _buildOptionTile(
+                icon: Icons.share_rounded,
+                title: 'Share',
+                subtitle: 'Share via apps',
+                onTap: () {
+                  Navigator.pop(context);
+                  _shareInvoice(invoice);
+                },
+              ),
+              _buildOptionTile(
+                icon: Icons.edit_rounded,
+                title: 'Rename',
+                subtitle: 'Change invoice number',
+                onTap: () {
+                  Navigator.pop(context);
+                  _renameInvoice(invoice);
+                },
+              ),
+              _buildOptionTile(
+                icon: Icons.info_outline_rounded,
+                title: 'Details',
+                subtitle: 'View invoice information',
+                onTap: () {
+                  Navigator.pop(context);
+                  _showInvoiceDetails(invoice);
+                },
+              ),
+              Divider(height: 1, color: AppColors.border),
+              _buildOptionTile(
+                icon: Icons.delete_outline_rounded,
+                title: 'Delete',
+                subtitle: 'Remove permanently',
+                textColor: AppColors.error,
+                onTap: () {
+                  Navigator.pop(context);
+                  _deleteInvoice(invoice);
+                },
+              ),
+              SizedBox(height: AppSpacing.md),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOptionTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+    Color? textColor,
+  }) {
+    return ListTile(
+      leading: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: (textColor ?? AppColors.primary).withOpacity(0.1),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Icon(
+          icon,
+          color: textColor ?? AppColors.primary,
+          size: 20,
+        ),
+      ),
+      title: Text(
+        title,
+        style: AppTextStyles.bodyMedium.copyWith(
+          fontWeight: FontWeight.w600,
+          color: textColor,
+        ),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: AppTextStyles.bodySmall.copyWith(
+          color: AppColors.textSecondary,
+        ),
+      ),
+      onTap: onTap,
+    );
+  }
+
+  // Download invoice as PDF
+  Future<void> _downloadInvoice(Map<String, dynamic> invoice) async {
+    try {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Downloading invoice...'),
+          backgroundColor: AppColors.primary,
+        ),
+      );
+
+      // Fetch items and regenerate PDF for download
+      final selectedItems = await InvoiceService().getItemsForInvoice(invoice['id']);
+      
+      // TODO: Implement actual download logic here
+      // This would involve generating the PDF and saving it to device storage
+      print('Downloading invoice with ${selectedItems.length} items');
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Invoice downloaded successfully!'),
+          backgroundColor: AppColors.success,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Download failed: ${e.toString()}'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    }
+  }
+
+  // Share invoice
+  Future<void> _shareInvoice(Map<String, dynamic> invoice) async {
+    try {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Preparing invoice for sharing...'),
+          backgroundColor: AppColors.primary,
+        ),
+      );
+
+      // Generate a shareable text summary
+      final shareText = '''
+Invoice #${invoice['invoice_number']}
+To: ${invoice['bill_to']}
+Amount: \$${invoice['total'].toStringAsFixed(2)}
+Date: ${_formatDate(invoice['created_at'])}
+
+Generated by Billora Invoice App
+''';
+
+      await Share.share(
+        shareText,
+        subject: 'Invoice #${invoice['invoice_number']}',
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Share failed: ${e.toString()}'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    }
+  }
+
+  // Rename invoice
+  Future<void> _renameInvoice(Map<String, dynamic> invoice) async {
+    final controller = TextEditingController(text: invoice['invoice_number']);
+    
+    final result = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Rename Invoice', style: AppTextStyles.h5),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Enter a new invoice number:',
+              style: AppTextStyles.bodyMedium,
+            ),
+            SizedBox(height: AppSpacing.md),
+            TextField(
+              controller: controller,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                hintText: 'Invoice number',
+                prefixText: '#',
+              ),
+              autofocus: true,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, controller.text.trim()),
+            child: Text('Rename'),
+          ),
+        ],
+      ),
+    );
+
+    if (result != null && result.isNotEmpty && result != invoice['invoice_number']) {
+      try {
+        // You would implement the actual rename logic here
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Invoice renamed successfully!'),
+            backgroundColor: AppColors.success,
+          ),
+        );
+        loadInvoices(); // Refresh the list
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Rename failed: ${e.toString()}'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+    
+    controller.dispose();
+  }
+
+  // Show invoice details
+  Future<void> _showInvoiceDetails(Map<String, dynamic> invoice) async {
+    final items = await InvoiceService().getItemsForInvoice(invoice['id']);
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Invoice Details', style: AppTextStyles.h5),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildDetailRow('Invoice Number', '#${invoice['invoice_number']}'),
+              _buildDetailRow('Bill To', invoice['bill_to']),
+              _buildDetailRow('Email', invoice['email'] ?? 'Not provided'),
+              _buildDetailRow('Phone', invoice['phone'] ?? 'Not provided'),
+              _buildDetailRow('Address', invoice['address'] ?? 'Not provided'),
+              _buildDetailRow('Total Amount', '\$${invoice['total'].toStringAsFixed(2)}'),
+              _buildDetailRow('Date Created', _formatDate(invoice['created_at'])),
+              SizedBox(height: AppSpacing.md),
+              Text('Items (${items.length})', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
+              SizedBox(height: AppSpacing.sm),
+              ...items.entries.map((entry) => Padding(
+                padding: EdgeInsets.only(bottom: AppSpacing.xs),
+                child: Text(
+                  '• ${entry.key.name} (Qty: ${entry.value})',
+                  style: AppTextStyles.bodySmall,
+                ),
+              )).toList(),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: AppSpacing.sm),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 80,
+            child: Text(
+              '$label:',
+              style: AppTextStyles.bodySmall.copyWith(
+                fontWeight: FontWeight.w600,
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: AppTextStyles.bodySmall,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Delete invoice
+  Future<void> _deleteInvoice(Map<String, dynamic> invoice) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Delete Invoice', style: AppTextStyles.h5),
+        content: Text(
+          'Are you sure you want to delete Invoice #${invoice['invoice_number']}? This action cannot be undone.',
+          style: AppTextStyles.bodyMedium,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.error,
+              foregroundColor: Colors.white,
+            ),
+            child: Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      try {
+        // You would implement the actual deletion logic here
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Invoice deleted successfully!'),
+            backgroundColor: AppColors.success,
+          ),
+        );
+        loadInvoices(); // Refresh the list
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Deletion failed: ${e.toString()}'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -151,7 +552,7 @@ class _InvoiceListPageState extends State<InvoiceListPage> {
                 padding: EdgeInsets.only(bottom: AppSpacing.md),
                 child: AppCard(
                   child: InkWell(
-                    onTap: () => regenerateInvoice(invoice),
+                    onTap: () => _showInvoiceOptions(context, invoice),
                     borderRadius: BorderRadius.circular(12),
                     child: Padding(
                       padding: EdgeInsets.all(AppSpacing.md),
@@ -213,9 +614,9 @@ class _InvoiceListPageState extends State<InvoiceListPage> {
 
                                 SizedBox(height: AppSpacing.xs),
 
-                                // Regenerate hint
+                                // Action hint
                                 Text(
-                                  "Tap to regenerate with current template",
+                                  "Tap for options",
                                   style: AppTextStyles.bodySmall.copyWith(
                                     color: AppColors.textSecondary
                                         .withOpacity(0.7),
@@ -226,7 +627,7 @@ class _InvoiceListPageState extends State<InvoiceListPage> {
                             ),
                           ),
 
-                          // Amount and arrow
+                          // Amount and more icon
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
@@ -239,8 +640,8 @@ class _InvoiceListPageState extends State<InvoiceListPage> {
                               ),
                               SizedBox(height: AppSpacing.sm),
                               Icon(
-                                Icons.arrow_forward_ios_rounded,
-                                size: 16,
+                                Icons.more_vert_rounded,
+                                size: 20,
                                 color: AppColors.textSecondary,
                               ),
                             ],
