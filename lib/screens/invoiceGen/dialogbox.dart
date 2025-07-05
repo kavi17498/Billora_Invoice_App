@@ -77,9 +77,8 @@ Future<void> showInvoiceDialog(BuildContext parentContext) async {
                           CheckboxListTile(
                             value: isSelected,
                             title: Text(item.name),
-                            subtitle: Text(item.type == 'good'
-                                ? 'Available: ${item.quantity}'
-                                : 'Service'),
+                            subtitle:
+                                Text('\$${item.price.toStringAsFixed(2)}'),
                             onChanged: (selected) {
                               setState(() {
                                 if (selected!) {
@@ -90,13 +89,14 @@ Future<void> showInvoiceDialog(BuildContext parentContext) async {
                               });
                             },
                           ),
-                          if (isSelected && item.type == 'good')
+                          if (isSelected)
                             Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 16),
                               child: TextFormField(
                                 decoration: InputDecoration(
-                                  labelText: 'Quantity for ${item.name}',
+                                  labelText: 'Quantity sold for ${item.name}',
+                                  hintText: 'How many did you sell?',
                                 ),
                                 keyboardType: TextInputType.number,
                                 initialValue:
@@ -108,10 +108,6 @@ Future<void> showInvoiceDialog(BuildContext parentContext) async {
                                   final qty = int.tryParse(value);
                                   if (qty == null || qty <= 0) {
                                     return 'Invalid quantity';
-                                  }
-                                  if (item.quantity != null &&
-                                      qty > item.quantity!) {
-                                    return 'Exceeds available quantity';
                                   }
                                   return null;
                                 },
@@ -140,16 +136,7 @@ Future<void> showInvoiceDialog(BuildContext parentContext) async {
                   if (formKey.currentState!.validate()) {
                     formKey.currentState!.save();
 
-                    for (var entry in selectedItemsWithQuantity.entries) {
-                      final item = entry.key;
-                      final sellQty = entry.value;
-
-                      if (item.type == 'good' && item.quantity != null) {
-                        item.quantity = item.quantity! - sellQty;
-                        await ItemService.updateItem(item);
-                      }
-                    }
-
+                    // No inventory management - just proceed with invoice creation
                     Navigator.pop(context);
 
                     await generateAndSharePdf(

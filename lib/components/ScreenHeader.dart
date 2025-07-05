@@ -21,22 +21,28 @@ class ScreenHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final isSmallScreen = screenSize.height < 600;
+
     return Column(
       crossAxisAlignment: centerTitle ? CrossAxisAlignment.center : alignment,
       children: [
         Text(
           title,
-          style: AppTextStyles.h2.copyWith(
+          style: (isSmallScreen ? AppTextStyles.h3 : AppTextStyles.h2).copyWith(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.w700,
           ),
           textAlign: centerTitle ? TextAlign.center : TextAlign.start,
         ),
         if (subtitle != null) ...[
-          SizedBox(height: AppSpacing.sm),
+          SizedBox(height: isSmallScreen ? AppSpacing.xs : AppSpacing.sm),
           Text(
             subtitle!,
-            style: AppTextStyles.bodyLarge.copyWith(
+            style: (isSmallScreen
+                    ? AppTextStyles.bodyMedium
+                    : AppTextStyles.bodyLarge)
+                .copyWith(
               color: AppColors.textSecondary,
             ),
             textAlign: centerTitle ? TextAlign.center : TextAlign.start,

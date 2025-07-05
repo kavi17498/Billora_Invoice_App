@@ -9,8 +9,8 @@ class Item {
   double price;
   double cost;
   String imagePath; // Local file path
-  String type; // 'service' or 'good'
-  int? quantity; // only for goods
+  String type; // Always 'item' now - everything is an item
+  int quantity; // Default quantity, always required
 
   Item({
     this.id,
@@ -19,8 +19,8 @@ class Item {
     required this.price,
     required this.cost,
     required this.imagePath,
-    required this.type,
-    this.quantity,
+    this.type = 'item', // Default to 'item'
+    this.quantity = 1, // Default quantity is 1
   });
 
   Map<String, dynamic> toMap() {
@@ -39,13 +39,13 @@ class Item {
   factory Item.fromMap(Map<String, dynamic> map) {
     return Item(
       id: map['id'],
-      name: map['name'],
-      description: map['description'],
-      price: map['price'],
-      cost: map['cost'],
-      imagePath: map['image_path'],
-      type: map['type'],
-      quantity: map['quantity'],
+      name: map['name'] ?? '',
+      description: map['description'] ?? '',
+      price: (map['price'] ?? 0.0).toDouble(),
+      cost: (map['cost'] ?? 0.0).toDouble(),
+      imagePath: map['image_path'] ?? '',
+      type: map['type'] ?? 'item',
+      quantity: map['quantity'] ?? 1,
     );
   }
 }

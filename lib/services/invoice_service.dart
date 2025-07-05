@@ -120,15 +120,15 @@ class InvoiceService {
           cost: cost is int ? (cost).toDouble() : (cost as double?) ?? 0.0,
           imagePath: imagePath as String? ?? '',
           type: type as String,
-          // Handle quantity field for the Item object separately from the invoice quantity
-          quantity: null, // Default to null since this is the item definition
+          // Use default quantity of 1 for item definition
+          quantity: 1,
         );
 
-        // Handle invoice item quantity, defaulting to 1 for services as you mentioned
+        // Handle invoice item quantity, defaulting to 1 for all items
         int itemQuantity;
         if (quantity == null) {
-          // If quantity is null, use 1 as default for services and 0 for goods
-          itemQuantity = (type.toLowerCase() == 'service') ? 1 : 0;
+          // If quantity is null, use 1 as default for all items
+          itemQuantity = 1;
           print(
               'Warning: Null quantity found for item ${item.name}, defaulting to $itemQuantity');
         } else {

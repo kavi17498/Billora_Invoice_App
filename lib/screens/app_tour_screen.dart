@@ -44,9 +44,9 @@ class _AppTourScreenState extends State<AppTourScreen> {
       color: Color(0xFF8B5CF6),
     ),
     TourPage(
-      title: "Items & Services",
+      title: "Items Catalog",
       description:
-          "Manage your products and services catalog. Set default prices and descriptions for quick invoice creation and consistent billing.",
+          "Manage your items catalog - everything you sell or bill for. Set default prices and descriptions for quick invoice creation and consistent billing.",
       icon: Icons.inventory_2_outlined,
       color: Color(0xFFF59E0B),
     ),

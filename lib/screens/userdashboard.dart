@@ -116,7 +116,7 @@ class _UserDashboardState extends State<UserDashboard> {
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      "1️⃣ First, we'll add your clients\n2️⃣ Then, add your products/services\n3️⃣ Finally, create invoices\n\nThis bottom bar helps you navigate between sections.",
+                      "1️⃣ First, we'll add your clients\n2️⃣ Then, add your items\n3️⃣ Finally, create invoices\n\nThis bottom bar helps you navigate between sections.",
                       style: TextStyle(color: Colors.black87, height: 1.4),
                     ),
                     const SizedBox(height: 15),
@@ -195,7 +195,7 @@ class _UserDashboardState extends State<UserDashboard> {
                         backgroundColor: Color(0xFF4D7CFE),
                         foregroundColor: Colors.white,
                       ),
-                      child: const Text("Next: Add Products/Services"),
+                      child: const Text("Next: Add Items"),
                     ),
                   ],
                 ),
@@ -227,7 +227,7 @@ class _UserDashboardState extends State<UserDashboard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      "📦 Step 2: Add Your Products/Services",
+                      "📦 Step 2: Add Your Items",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
@@ -236,12 +236,12 @@ class _UserDashboardState extends State<UserDashboard> {
                     ),
                     const SizedBox(height: 10),
                     const Text(
-                      "Now add the items you sell - products, services, or anything you invoice for. Set their prices and descriptions here.",
+                      "Now add the items you sell - anything you invoice for. Set their prices and descriptions here.",
                       style: TextStyle(color: Colors.black87, height: 1.4),
                     ),
                     const SizedBox(height: 10),
                     const Text(
-                      "💡 Examples: 'Web Design Service - \$500', 'Product Name - \$25', 'Consulting Hour - \$100'",
+                      "💡 Examples: 'Web Design - \$500', 'Medicine - \$25', 'Consulting Hour - \$100'",
                       style: TextStyle(
                           color: Colors.green, fontStyle: FontStyle.italic),
                     ),

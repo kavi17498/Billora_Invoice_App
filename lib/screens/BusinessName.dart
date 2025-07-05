@@ -15,7 +15,6 @@ class Businessname extends StatefulWidget {
 }
 
 class _BusinessnameState extends State<Businessname> {
-  String? _businessName;
   final TextEditingController _controller = TextEditingController();
   final DatabaseService _databaseService = DatabaseService.instance;
 
@@ -26,20 +25,39 @@ class _BusinessnameState extends State<Businessname> {
   }
 
   void _continue() {
-    if (_businessName == null || _businessName!.isEmpty) {
+    // Ensure the widget is still mounted before proceeding
+    if (!mounted) return;
+
+    final businessName = _controller.text.trim();
+
+    if (businessName.isEmpty) {
       _showError("Please enter a business name");
       return;
     }
-    if (_businessName!.length < 3) {
+    if (businessName.length < 3) {
       _showError("Business name must be at least 3 characters");
       return;
     }
+    if (businessName.length > 50) {
+      _showError("Business name must be less than 50 characters");
+      return;
+    }
 
-    _databaseService.insertUser(_businessName!);
-    Navigator.pushNamed(context, "/uploadlogo");
+    try {
+      _databaseService.insertUser(businessName);
+      if (mounted) {
+        Navigator.pushNamed(context, "/uploadlogo");
+      }
+    } catch (e) {
+      if (mounted) {
+        _showError("Failed to save business name. Please try again.");
+      }
+    }
   }
 
   void _showError(String message) {
+    if (!mounted) return;
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
@@ -51,12 +69,19 @@ class _BusinessnameState extends State<Businessname> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
+        margin: EdgeInsets.all(AppSpacing.md),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final screenHeight = screenSize.height;
+    final screenWidth = screenSize.width;
+    final isSmallScreen = screenHeight < 600;
+    final isLargeScreen = screenHeight > 800;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -68,54 +93,93 @@ class _BusinessnameState extends State<Businessname> {
         ),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            children: [
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Header
-                    const ScreenHeader(
-                      title: "Enter your Business Name",
-                      subtitle: "This will help us personalize your invoices",
-                      centerTitle: true,
-                    ),
-                    SizedBox(height: AppSpacing.xl * 2),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight,
+                ),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: screenWidth * 0.05, // 5% of screen width
+                    vertical: isSmallScreen ? AppSpacing.md : AppSpacing.lg,
+                  ),
+                  child: Column(
+                    children: [
+                      // Flexible spacing at top
+                      SizedBox(
+                        height: isSmallScreen
+                            ? constraints.maxHeight * 0.08
+                            : constraints.maxHeight * 0.15,
+                      ),
 
-                    // Business name input
-                    AppTextField(
-                      controller: _controller,
-                      labelText: "Business Name",
-                      hintText: "Enter your business name",
-                      onChanged: (value) {
-                        _businessName = value;
-                      },
-                      prefixIcon: Icons.business_rounded,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Please enter a business name";
-                        }
-                        if (value.length < 3) {
-                          return "Business name must be at least 3 characters";
-                        }
-                        return null;
-                      },
-                    ),
-                  ],
+                      // Header with responsive sizing
+                      ScreenHeader(
+                        title: "Enter your Business Name",
+                        subtitle: "This will help us personalize your invoices",
+                        centerTitle: true,
+                      ),
+
+                      // Responsive spacing
+                      SizedBox(
+                        height: isSmallScreen
+                            ? constraints.maxHeight * 0.06
+                            : isLargeScreen
+                                ? constraints.maxHeight * 0.12
+                                : constraints.maxHeight * 0.08,
+                      ),
+
+                      // Business name input with responsive width
+                      Container(
+                        width: screenWidth > 600
+                            ? 400 // Fixed width for larger screens
+                            : double.infinity, // Full width for mobile
+                        child: AppTextField(
+                          controller: _controller,
+                          labelText: "Business Name",
+                          hintText: "Enter your business name",
+                          prefixIcon: Icons.business_rounded,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Please enter a business name";
+                            }
+                            if (value.length < 3) {
+                              return "Business name must be at least 3 characters";
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+
+                      // Flexible spacing before buttons
+                      SizedBox(
+                        height: isSmallScreen
+                            ? constraints.maxHeight * 0.08
+                            : constraints.maxHeight * 0.15,
+                      ),
+
+                      // Bottom action buttons with responsive width
+                      Container(
+                        width: screenWidth > 600
+                            ? 400 // Fixed width for larger screens
+                            : double.infinity, // Full width for mobile
+                        child: BottomActionBar(
+                          primaryButtonText: "Continue",
+                          onPrimaryPressed: _continue,
+                          onSkipPressed: () =>
+                              Navigator.pushNamed(context, "/uploadlogo"),
+                        ),
+                      ),
+
+                      // Bottom spacing to ensure buttons are not at the very bottom
+                      SizedBox(height: AppSpacing.lg),
+                    ],
+                  ),
                 ),
               ),
-
-              // Bottom action buttons
-              BottomActionBar(
-                primaryButtonText: "Continue",
-                onPrimaryPressed: _continue,
-                onSkipPressed: () =>
-                    Navigator.pushNamed(context, "/uploadlogo"),
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
