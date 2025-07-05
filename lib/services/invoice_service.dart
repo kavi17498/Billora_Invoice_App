@@ -207,7 +207,8 @@ class InvoiceService {
     }
   }
 
-  Future<bool> updateInvoiceNumber(int invoiceId, String newInvoiceNumber) async {
+  Future<bool> updateInvoiceNumber(
+      int invoiceId, String newInvoiceNumber) async {
     try {
       final db = await DatabaseService.instance.getdatabase();
 
