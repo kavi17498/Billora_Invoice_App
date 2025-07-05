@@ -11,6 +11,8 @@ class Item {
   String imagePath; // Local file path
   String type; // Always 'item' now - everything is an item
   int quantity; // Default quantity, always required
+  double discountPercentage; // Discount percentage (0-100)
+  double discountAmount; // Fixed discount amount
 
   Item({
     this.id,
@@ -21,7 +23,32 @@ class Item {
     required this.imagePath,
     this.type = 'item', // Default to 'item'
     this.quantity = 1, // Default quantity is 1
+    this.discountPercentage = 0.0, // Default no discount
+    this.discountAmount = 0.0, // Default no discount
   });
+
+  // Calculate final price after discount
+  double get finalPrice {
+    if (discountAmount > 0) {
+      // Fixed discount amount takes priority
+      return (price - discountAmount).clamp(0.0, double.infinity);
+    } else if (discountPercentage > 0) {
+      // Apply percentage discount
+      final discount = price * (discountPercentage / 100);
+      return (price - discount).clamp(0.0, double.infinity);
+    }
+    return price;
+  }
+
+  // Get discount display text
+  String get discountDisplay {
+    if (discountAmount > 0) {
+      return 'Rs. ${discountAmount.toStringAsFixed(2)} off';
+    } else if (discountPercentage > 0) {
+      return '${discountPercentage.toStringAsFixed(1)}% off';
+    }
+    return '';
+  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -33,6 +60,8 @@ class Item {
       'image_path': imagePath,
       'type': type,
       'quantity': quantity,
+      'discount_percentage': discountPercentage,
+      'discount_amount': discountAmount,
     };
   }
 
@@ -46,6 +75,8 @@ class Item {
       imagePath: map['image_path'] ?? '',
       type: map['type'] ?? 'item',
       quantity: map['quantity'] ?? 1,
+      discountPercentage: (map['discount_percentage'] ?? 0.0).toDouble(),
+      discountAmount: (map['discount_amount'] ?? 0.0).toDouble(),
     );
   }
 }
@@ -65,7 +96,9 @@ class ItemService {
         cost REAL,
         image_path TEXT,
         type TEXT,
-        quantity INTEGER
+        quantity INTEGER,
+        discount_percentage REAL DEFAULT 0.0,
+        discount_amount REAL DEFAULT 0.0
       )
     ''');
     print("Item table created.");
