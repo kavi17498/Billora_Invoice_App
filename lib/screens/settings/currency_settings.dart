@@ -89,10 +89,6 @@ class _CurrencySettingsScreenState extends State<CurrencySettingsScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppAppBar(
-        title: 'Currency Settings',
-        showBackButton: true,
-      ),
       body: SafeArea(
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
