@@ -10,10 +10,33 @@ class PdfPreviewPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Invoice Preview"),
-        actions: [
+    return WillPopScope(
+      onWillPop: () async {
+        // Navigate to dashboard with client section selected
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          "/dashboard",
+          (route) => false,
+          arguments: 1, // Client section index
+        );
+        return false; // Prevent default back behavior
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Invoice Preview"),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              // Navigate to dashboard with client section selected
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                "/dashboard",
+                (route) => false,
+                arguments: 1, // Client section index
+              );
+            },
+          ),
+          actions: [
           TextButton.icon(
             onPressed: () async {
               final file = File(filePath);
@@ -36,6 +59,7 @@ class PdfPreviewPage extends StatelessWidget {
       body: PDFView(
         filePath: filePath,
       ),
-    );
+    ),
+  );
   }
 }

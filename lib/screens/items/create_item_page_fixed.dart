@@ -154,6 +154,10 @@ class _CreateItemPageState extends State<CreateItemPage> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
+      appBar: AppAppBar(
+        title: 'Add Item',
+        showBackButton: true,
+      ),
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {

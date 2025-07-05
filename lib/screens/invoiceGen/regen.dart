@@ -98,9 +98,21 @@ class _RegenPageState extends State<RegenPage> {
 
       // Calculate total price and handle null quantities
       double totalPrice = 0;
+      double totalDiscount = 0;
       widget.selectedItems.forEach((item, quantity) {
         final safeQty = quantity ?? 1; // Handle null quantities
-        totalPrice += item.price * safeQty;
+        double itemSubtotal = item.price * safeQty;
+        double itemDiscount = 0;
+
+        // Calculate discount for this item
+        if (item.discountPercentage > 0) {
+          itemDiscount = itemSubtotal * (item.discountPercentage / 100);
+        } else if (item.discountAmount > 0) {
+          itemDiscount = item.discountAmount * safeQty;
+        }
+
+        totalDiscount += itemDiscount;
+        totalPrice += itemSubtotal - itemDiscount;
       });
 
       pdf.addPage(
@@ -120,7 +132,7 @@ class _RegenPageState extends State<RegenPage> {
                 pw.SizedBox(height: 20),
                 _buildItemsSection(template, widget.selectedItems),
                 pw.SizedBox(height: 20),
-                _buildTotal(template, totalPrice),
+                _buildTotal(template, totalPrice, totalDiscount),
                 pw.SizedBox(height: 15),
                 _buildPaymentInstructions(template, userData),
                 pw.Divider(color: template.colors.border),
@@ -349,6 +361,8 @@ class _RegenPageState extends State<RegenPage> {
         1: const pw.FlexColumnWidth(2), // Type
         2: const pw.FlexColumnWidth(1), // Qty
         3: const pw.FlexColumnWidth(2), // Price
+        4: const pw.FlexColumnWidth(2), // Discount
+        5: const pw.FlexColumnWidth(2), // Final Price
       },
       children: [
         pw.TableRow(
@@ -380,6 +394,18 @@ class _RegenPageState extends State<RegenPage> {
                   style: pw.TextStyle(
                       fontWeight: pw.FontWeight.bold, color: primaryColor)),
             ),
+            pw.Padding(
+              padding: const pw.EdgeInsets.all(8),
+              child: pw.Text('Discount',
+                  style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold, color: primaryColor)),
+            ),
+            pw.Padding(
+              padding: const pw.EdgeInsets.all(8),
+              child: pw.Text('Final Price (Rs)',
+                  style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold, color: primaryColor)),
+            ),
           ],
         ),
         ...selectedItems.entries.map((entry) {
@@ -387,6 +413,21 @@ class _RegenPageState extends State<RegenPage> {
           final qty = entry.value ?? 1;
           final index = selectedItems.keys.toList().indexOf(item);
           final isEven = index % 2 == 0;
+
+          // Calculate discount for this item
+          double itemSubtotal = item.price * qty;
+          double itemDiscount = 0;
+          String discountText = '-';
+
+          if (item.discountPercentage > 0) {
+            itemDiscount = itemSubtotal * (item.discountPercentage / 100);
+            discountText = '${item.discountPercentage.toStringAsFixed(1)}%';
+          } else if (item.discountAmount > 0) {
+            itemDiscount = item.discountAmount * qty;
+            discountText = 'Rs. ${item.discountAmount.toStringAsFixed(2)}';
+          }
+
+          double finalPrice = itemSubtotal - itemDiscount;
 
           return pw.TableRow(
             decoration: pw.BoxDecoration(
@@ -414,6 +455,16 @@ class _RegenPageState extends State<RegenPage> {
                 child: pw.Text('Rs. ${item.price.toStringAsFixed(2)}',
                     style: pw.TextStyle(color: textColor)),
               ),
+              pw.Padding(
+                padding: const pw.EdgeInsets.all(8),
+                child: pw.Text(discountText,
+                    style: pw.TextStyle(color: textColor)),
+              ),
+              pw.Padding(
+                padding: const pw.EdgeInsets.all(8),
+                child: pw.Text('Rs. ${finalPrice.toStringAsFixed(2)}',
+                    style: pw.TextStyle(color: textColor)),
+              ),
             ],
           );
         }).toList(),
@@ -421,10 +472,28 @@ class _RegenPageState extends State<RegenPage> {
     );
   }
 
-  pw.Widget _buildTotal(InvoiceTemplate template, double totalPrice) {
-    return pw.Row(
-      mainAxisAlignment: pw.MainAxisAlignment.end,
+  pw.Widget _buildTotal(
+      InvoiceTemplate template, double totalPrice, double totalDiscount) {
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.end,
       children: [
+        if (totalDiscount > 0) ...[
+          pw.Container(
+            padding: const pw.EdgeInsets.all(8),
+            margin: const pw.EdgeInsets.only(bottom: 4),
+            decoration: pw.BoxDecoration(
+              color: template.colors.background,
+              borderRadius: pw.BorderRadius.circular(4),
+              border: pw.Border.all(color: template.colors.border),
+            ),
+            child: pw.Text(
+                'Total Discount: Rs. ${totalDiscount.toStringAsFixed(2)}',
+                style: pw.TextStyle(
+                    fontSize: 12,
+                    color: template.colors.text,
+                    fontWeight: pw.FontWeight.normal)),
+          ),
+        ],
         pw.Container(
           padding: const pw.EdgeInsets.all(10),
           decoration: pw.BoxDecoration(

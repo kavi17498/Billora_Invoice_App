@@ -33,7 +33,7 @@ class DatabaseService {
 
     _database = await openDatabase(
       databasepath,
-      version: 3, // Incremented version to allow template tables
+      version: 5, // Incremented version to trigger discount fields migration
       onCreate: (db, version) async {
         print("Creating user table...");
         await db.execute('''
@@ -65,6 +65,35 @@ class DatabaseService {
         }
         if (oldVersion < 3) {
           await TemplateService.createTemplateTable(db);
+        }
+        if (oldVersion < 4) {
+          // Add discount columns to existing item table
+          try {
+            await db.execute(
+                'ALTER TABLE item ADD COLUMN discount_percentage REAL DEFAULT 0.0');
+            await db.execute(
+                'ALTER TABLE item ADD COLUMN discount_amount REAL DEFAULT 0.0');
+            print("Added discount columns to item table.");
+          } catch (e) {
+            print("Error adding discount columns: $e");
+          }
+        }
+        if (oldVersion < 5) {
+          // Ensure discount columns exist (in case previous migration failed)
+          try {
+            await db.execute(
+                'ALTER TABLE item ADD COLUMN discount_percentage REAL DEFAULT 0.0');
+            print("Added discount_percentage column to item table.");
+          } catch (e) {
+            print("discount_percentage column may already exist: $e");
+          }
+          try {
+            await db.execute(
+                'ALTER TABLE item ADD COLUMN discount_amount REAL DEFAULT 0.0');
+            print("Added discount_amount column to item table.");
+          } catch (e) {
+            print("discount_amount column may already exist: $e");
+          }
         }
       },
     );
@@ -148,5 +177,19 @@ class DatabaseService {
       whereArgs: [userId],
     );
     print("User updated successfully.");
+  }
+
+  // Emergency method to reset database if migration fails
+  static Future<void> resetDatabase() async {
+    final databaseDirpath = await getDatabasesPath();
+    final databasepath = join(databaseDirpath, 'master_db.db');
+
+    try {
+      await deleteDatabase(databasepath);
+      print("Database deleted successfully.");
+      _database = null; // Reset the database instance
+    } catch (e) {
+      print("Error deleting database: $e");
+    }
   }
 }
