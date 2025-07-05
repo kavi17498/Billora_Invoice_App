@@ -53,7 +53,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
         email: emailController.text,
       );
 
-      Navigator.pushNamed(context, "/dashboard");
+      Navigator.pushNamed(context, "/paymentinstructions");
     } catch (e) {
       print("Failed to update profile: $e");
       if (mounted) {
@@ -180,7 +180,8 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                 onPrimaryPressed: _saveProfile,
                 primaryButtonLoading: _isLoading,
                 primaryButtonEnabled: !_isLoading,
-                onSkipPressed: () => Navigator.pushNamed(context, "/dashboard"),
+                onSkipPressed: () =>
+                    Navigator.pushNamed(context, "/paymentinstructions"),
               ),
             ],
           ),
