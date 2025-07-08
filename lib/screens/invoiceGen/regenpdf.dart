@@ -12,13 +12,16 @@ class Regenpdf extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Invoice Preview"),
+        title: const Text('Invoice Preview'),
         actions: [
+          // Share button
           TextButton.icon(
             onPressed: () async {
               final file = File(filePath);
               if (await file.exists()) {
-                Share.shareXFiles([XFile(filePath)], text: 'Invoice PDF');
+                Share.shareXFiles([XFile(filePath)],
+                    text:
+                        'Your invoice was created with Billora Invoice App - Professional invoicing made simple!');
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('PDF file not found')),

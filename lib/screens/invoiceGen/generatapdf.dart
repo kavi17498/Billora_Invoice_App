@@ -8,7 +8,6 @@ import 'package:invoiceapp/services/currency_service.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/pdf.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:invoiceapp/services/item_service.dart';
 import 'package:invoiceapp/models/invoice_template.dart';
 
@@ -135,12 +134,12 @@ Future<void> generateAndSharePdf(
     );
     print("Invoice saved with ID: $invoiceId");
 
+    // Navigate to preview page without automatically sharing
+    // User can choose to share from the preview screen
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => PdfPreviewPage(filePath: file.path)),
     );
-
-    await Share.shareXFiles([XFile(file.path)], text: 'Here is your invoice!');
   } catch (e) {
     Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
