@@ -47,29 +47,31 @@ class PdfPreviewPage extends StatelessWidget {
             },
           ),
           actions: [
-          TextButton.icon(
-            onPressed: () async {
-              final file = File(filePath);
-              if (await file.exists()) {
-                Share.shareXFiles([XFile(filePath)], text: 'Your invoice was created with Billora Invoice App - Professional invoicing made simple!');
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('PDF file not found')),
-                );
-              }
-            },
-            icon: const Icon(Icons.share, color: Colors.white),
-            label: const Text(
-              'Share',
-              style: TextStyle(color: Colors.white),
+            TextButton.icon(
+              onPressed: () async {
+                final file = File(filePath);
+                if (await file.exists()) {
+                  Share.shareXFiles([XFile(filePath)],
+                      text:
+                          'Your invoice was created with Billora Invoice App - Professional invoicing made simple!');
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('PDF file not found')),
+                  );
+                }
+              },
+              icon: const Icon(Icons.share, color: Colors.white),
+              label: const Text(
+                'Share',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
+        body: PDFView(
+          filePath: filePath,
+        ),
       ),
-      body: PDFView(
-        filePath: filePath,
-      ),
-    ),
-  );
+    );
   }
 }
