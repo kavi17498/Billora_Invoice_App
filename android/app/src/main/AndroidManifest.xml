@@ -2,6 +2,7 @@
     <application
         android:label="Billora - Invoice App"
         android:name="${applicationName}"
+        android:usesCleartextTraffic="true"
         android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
@@ -30,6 +31,8 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+         <meta-data android:name="android.webkit.WebView.EnableSafeBrowsing"
+            android:value="true" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
